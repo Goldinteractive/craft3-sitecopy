@@ -1,0 +1,21 @@
+{% import "_includes/forms" as forms %}
+
+<div id="sitecopy" class="meta pane">
+    {{ forms.lightswitchField({
+        label: 'Copy to site'|t('wsitecopy'),
+        id: 'siteCopy-toggle',
+        name: 'sitecopy[enabled]',
+        on: false,
+        toggle: '#sitecopy-options',
+    }) }}
+    <div class="hidden" id="sitecopy-options">
+        {# Intentionally passing non-empty array to uncheck "all" #}
+        {{ forms.radioGroupField({
+            label: "To which site should it be copied?"|t('sitecopy'),
+            id: 'siteCopy-targets',
+            name: 'sitecopy[targets]',
+            options: craft.sitecopy.getSiteInputOptions(supportedSites, [siteId]),
+            values: [''],
+        }) }}
+    </div>
+</div>
