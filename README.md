@@ -4,9 +4,9 @@ With this plugin you can copy the content of an entry to another site.
 
 ## Installation
 
-Install using `composer require goldinteractive/craft3-sitecopy`
+Install using `composer require goldinteractive/craft3-sitecopy` 
 
-## Usage
+## Usage
 
 When editing an entry at the bottom of the right panel you will find a toggle to enable
 site syncing. From there select the site that you want to overwrite with the currently
