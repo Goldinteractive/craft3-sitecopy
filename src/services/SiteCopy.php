@@ -23,6 +23,7 @@ class SiteCopy extends Component
 {
     /**
      * Indicates if we are already syncing
+     *
      * @var bool
      */
     private static $syncing = false;
@@ -72,6 +73,10 @@ class SiteCopy extends Component
     {
         /** @var Entry $entry */
         $entry = $event->element;
+
+        if (!$entry instanceof Entry) {
+            return;
+        }
 
         if (self::$syncing) {
             return;
