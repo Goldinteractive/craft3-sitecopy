@@ -91,7 +91,8 @@ class SiteCopy extends Component
 
         $supportedSites = $entry->getSupportedSites();
 
-        $targets = $elementSettings['targets'];
+        $targets = $elementSettings['targets'] ?? [];
+
         if (!is_array($targets)) {
             $targets = [$targets];
         }
