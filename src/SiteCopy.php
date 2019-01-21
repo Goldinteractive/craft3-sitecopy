@@ -12,6 +12,7 @@ use Craft;
 use craft\events\ElementEvent;
 use craft\services\Elements;
 use craft\web\twig\variables\CraftVariable;
+use goldinteractive\sitecopy\models\SettingsModel;
 use yii\base\Event;
 
 /**
@@ -22,6 +23,8 @@ use yii\base\Event;
  */
 class SiteCopy extends Plugin
 {
+    public $hasCpSettings = true;
+
     public function init()
     {
         parent::init();
@@ -54,11 +57,18 @@ class SiteCopy extends Plugin
                         return;
                     }
 
+                    $scas = $this->sitecopy->handleSiteCopyActiveState($element);
+
+                    $siteCopyEnabled = $scas['siteCopyEnabled'];
+                    $selectedSite = $scas['selectedSite'];
+
                     return Craft::$app->view->renderTemplate(
                         'sitecopy/_cp/entriesEditRightPane',
                         [
-                            'siteId'         => $element->siteId,
-                            'supportedSites' => $sites,
+                            'siteId'          => $element->siteId,
+                            'supportedSites'  => $sites,
+                            'siteCopyEnabled' => $siteCopyEnabled,
+                            'selectedSite'    => $selectedSite,
                         ]
                     );
                 }
@@ -72,5 +82,25 @@ class SiteCopy extends Plugin
                 }
             );
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function createSettingsModel(): SettingsModel
+    {
+        return new SettingsModel();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function settingsHtml()
+    {
+        return Craft::$app->getView()->renderTemplate('sitecopy/_cp/settings', [
+            'settings'                => $this->getSettings(),
+            'criteriaFieldOptions'    => \goldinteractive\sitecopy\services\SiteCopy::getCriteriaFields(),
+            'criteriaOperatorOptions' => \goldinteractive\sitecopy\services\SiteCopy::getOperators(),
+        ]);
     }
 }

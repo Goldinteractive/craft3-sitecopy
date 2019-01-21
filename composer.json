@@ -18,6 +18,7 @@
     "name": "Gold SiteCopy",
     "developer": "Gold Interactive",
     "developerUrl": "http://goldinteractive.ch",
-    "class": "goldinteractive\\sitecopy\\SiteCopy"
+    "class": "goldinteractive\\sitecopy\\SiteCopy",
+    "hasSettings": true
   }
 }

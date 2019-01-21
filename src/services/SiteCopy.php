@@ -21,6 +21,42 @@ use yii\base\Event;
  */
 class SiteCopy extends Component
 {
+    public static function getCriteriaFields()
+    {
+        return [
+            [
+                'value' => 'id',
+                'label' => Craft::t('sitecopy', 'Entry id'),
+            ],
+            [
+                'value' => 'type',
+                'label' => Craft::t('sitecopy', 'Entry type (handle)'),
+            ],
+            [
+                'value' => 'section',
+                'label' => Craft::t('sitecopy', 'Section (handle)'),
+            ],
+            [
+                'value' => 'site',
+                'label' => Craft::t('sitecopy', 'Site (handle)'),
+            ],
+        ];
+    }
+
+    public static function getOperators()
+    {
+        return [
+            [
+                'value' => 'eq',
+                'label' => Craft::t('sitecopy', 'Equals'),
+            ],
+            [
+                'value' => 'neq',
+                'label' => Craft::t('sitecopy', 'Does not equal'),
+            ],
+        ];
+    }
+
     /**
      * Indicates if we are already syncing
      *
@@ -115,5 +151,59 @@ class SiteCopy extends Component
         }
 
         self::$syncing = false;
+    }
+
+    /**
+     * @param Entry $element
+     * @return array
+     */
+    public function handleSiteCopyActiveState(craft\elements\Entry $element)
+    {
+        $siteCopyEnabled = false;
+        $selectedSite = null;
+
+        $settings = \goldinteractive\sitecopy\SiteCopy::getInstance()->getSettings()->combinedSettings;
+
+        foreach ($settings as $setting) {
+            $criteriaField = $setting[0] ?? null;
+            $operator = $setting[1] ?? null;
+            $value = $setting[2] ?? null;
+            $sourceId = $setting[3] ?? null;
+            $targetId = $setting[4] ?? null;
+
+            if (!empty($criteriaField) && !empty($operator) && !empty($value) && !empty($sourceId) && !empty($targetId)) {
+                if (($sourceId != '*' && (int)$sourceId != $element->siteId) || ($criteriaField !== 'typeHandle' && !$element->hasProperty($criteriaField))) {
+                    continue;
+                }
+
+                $checkFrom = false;
+
+                if ($criteriaField === 'id') {
+                    $checkFrom = $element->id;
+                } elseif (isset($element[$criteriaField]['handle'])) {
+                    $checkFrom = $element[$criteriaField]['handle'];
+                }
+
+                $check = false;
+
+                if ($operator === 'eq') {
+                    $check = $checkFrom == $value;
+                } elseif ($operator === 'neq') {
+                    $check = $checkFrom != $value;
+                }
+
+                if ($check && (int)$targetId !== $element->siteId) {
+                    $siteCopyEnabled = true;
+                    $selectedSite = (int)$targetId;
+
+                    break;
+                }
+            }
+        }
+
+        return [
+            'siteCopyEnabled' => $siteCopyEnabled,
+            'selectedSite'    => $selectedSite,
+        ];
     }
 }

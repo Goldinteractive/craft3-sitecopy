@@ -1,0 +1,45 @@
+{% import '_includes/forms' as forms %}
+
+{% set sourceOptions = [{value: '*', label: 'All Sites'|t('sitecopy')}] %}
+
+{% for site in craft.app.sites.getAllSites() %}
+    {% set sourceOptions = sourceOptions|merge([{value: site.id, label: site.name}]) %}
+{% endfor %}
+
+{% set targetOptions = sourceOptions|slice(1) %}
+
+{% set cols = [
+    {
+        type: 'select',
+        heading: 'Criteria'|t('sitecopy'),
+        options: criteriaFieldOptions,
+    },
+    {
+        type: 'select',
+        options: criteriaOperatorOptions,
+    },
+    {
+        type: 'text',
+        heading: 'Value'|t('sitecopy'),
+    },
+    {
+        type: 'select',
+        heading: 'Source site'|t('sitecopy'),
+        options: sourceOptions,
+    },
+    {
+        type: 'select',
+        heading: 'Target site'|t('sitecopy'),
+        options: targetOptions,
+    }
+] %}
+
+{{ forms.editableTableField({
+    label: 'Automatic copy (optional)'|t('sitecopy'),
+    instructions: 'Criterias for cases where the contents should be automatically copied from site x to site y.'|t('sitecopy'),
+    name: 'combinedSettings',
+    id: 'combinedSettings',
+    cols: cols,
+    rows: settings.combinedSettings,
+    addRowLabel: 'Add a criteria'|t('sitecopy'),
+}) }}
