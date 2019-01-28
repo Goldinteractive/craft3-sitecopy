@@ -14,3 +14,7 @@ visible content and then just save the entry like normal. Any content of the cur
 site will be automatically copied to the selected site.
 
 ***Attention:*** This action will OVERWRITE all content from the selected site.
+
+## Automatic overwrite
+
+You can set criterias in the plugin settings for automatically activating the "copy to site" toggle on load of an entry.
