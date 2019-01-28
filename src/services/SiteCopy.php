@@ -162,7 +162,7 @@ class SiteCopy extends Component
         $siteCopyEnabled = false;
         $selectedSite = null;
 
-        $settings = \goldinteractive\sitecopy\SiteCopy::getInstance()->getSettings()->combinedSettings;
+        $settings = $this->getCombinedSettings();
 
         foreach ($settings as $setting) {
             $criteriaField = $setting[0] ?? null;
@@ -205,5 +205,21 @@ class SiteCopy extends Component
             'siteCopyEnabled' => $siteCopyEnabled,
             'selectedSite'    => $selectedSite,
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getCombinedSettings()
+    {
+        $combinedSettings = [];
+
+        $settings = \goldinteractive\sitecopy\SiteCopy::getInstance()->getSettings();
+
+        if ($settings && isset($settings->combinedSettings) && is_array($settings->combinedSettings)) {
+            $combinedSettings = $settings->combinedSettings;
+        }
+
+        return $combinedSettings;
     }
 }
