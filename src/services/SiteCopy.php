@@ -203,6 +203,8 @@ class SiteCopy extends Component
                     // check failed, revert values to default
                     $siteCopyEnabled = false;
                     $selectedSite = null;
+
+                    break;
                 }
             }
         }
