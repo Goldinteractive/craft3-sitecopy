@@ -50,5 +50,5 @@
     id: 'combinedSettingsCheckMethod',
     name: 'combinedSettingsCheckMethod',
     options: [{value: 'or', label: 'OR'}, {value: 'and', label: 'AND'}],
-    value: settings.combinedSettingsCheckMethod,
+    value: settings.combinedSettingsCheckMethod is not empty ? settings.combinedSettingsCheckMethod : null,
 }) }}
