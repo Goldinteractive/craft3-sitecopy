@@ -43,3 +43,12 @@
     rows: settings.combinedSettings,
     addRowLabel: 'Add a criteria'|t('sitecopy'),
 }) }}
+
+{{ forms.selectField({
+    label: 'Criteria check method'|t('sitecopy'),
+    instructions: 'Decide if the criteria are mutually exclusive (OR) or everything needs to be true (AND).'|t('sitecopy'),
+    id: 'combinedSettingsCheckMethod',
+    name: 'combinedSettingsCheckMethod',
+    options: [{value: 'or', label: 'OR'}, {value: 'and', label: 'AND'}],
+    value: settings.combinedSettingsCheckMethod,
+}) }}

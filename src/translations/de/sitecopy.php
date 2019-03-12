@@ -23,4 +23,6 @@ return [
     'Automatic copy (optional)'                                                                    => 'Automatische Kopie (Optional)',
     'Criterias for cases where the contents should be automatically copied from site x to site y.' => 'Kriterien für die automatische Kopie der Inhalte von Seite x zu Seite y.',
     'Add a criteria'                                                                               => 'Kriterien hinzufügen',
+    'Criteria check method'                                                                        => 'Kriteren Check Methode',
+    'Decide if the criteria are mutually exclusive (OR) or everything needs to be true (AND).'     => 'Sollen die Kriteren sich gegenseitig ausschliessen (OR), oder muss alles zutreffen? (AND)',
 ];

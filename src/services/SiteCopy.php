@@ -164,7 +164,7 @@ class SiteCopy extends Component
 
         $settings = $this->getCombinedSettings();
 
-        foreach ($settings as $setting) {
+        foreach ($settings['settings'] as $setting) {
             $criteriaField = $setting[0] ?? null;
             $operator = $setting[1] ?? null;
             $value = $setting[2] ?? null;
@@ -196,7 +196,13 @@ class SiteCopy extends Component
                     $siteCopyEnabled = true;
                     $selectedSite = (int)$targetId;
 
-                    break;
+                    if ($settings['method'] == 'or') {
+                        break;
+                    }
+                } elseif ($settings['method'] == 'and') {
+                    // check failed, revert values to default
+                    $siteCopyEnabled = false;
+                    $selectedSite = null;
                 }
             }
         }
@@ -214,12 +220,19 @@ class SiteCopy extends Component
     {
         $combinedSettings = [];
 
+        // default set to or for backwards compatibility
+        $combinedSettingsCheckMethod = 'or';
+
         $settings = \goldinteractive\sitecopy\SiteCopy::getInstance()->getSettings();
 
         if ($settings && isset($settings->combinedSettings) && is_array($settings->combinedSettings)) {
             $combinedSettings = $settings->combinedSettings;
         }
 
-        return $combinedSettings;
+        if ($settings && isset($settings->combinedSettingsCheckMethod) && is_string($settings->combinedSettingsCheckMethod)) {
+            $combinedSettingsCheckMethod = $settings->combinedSettingsCheckMethod;
+        }
+
+        return ['settings' => $combinedSettings, 'method' => $combinedSettingsCheckMethod];
     }
 }

@@ -17,12 +17,18 @@ class SettingsModel extends Model
     public $combinedSettings = [];
 
     /**
+     * @var string
+     */
+    public $combinedSettingsCheckMethod = [];
+
+    /**
      * @return array
      */
     public function rules(): array
     {
         return [
             [['combinedSettings'], 'checkCombinedSettings'],
+            [['combinedSettingsCheckMethod'], 'in', 'range' => ['and', 'or']],
         ];
     }
 
