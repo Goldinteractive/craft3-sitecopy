@@ -199,7 +199,7 @@ class SiteCopy extends Component
                     if ($settings['method'] == 'or') {
                         break;
                     }
-                } elseif ($settings['method'] == 'and') {
+                } elseif ($settings['method'] == 'and' && (int)$targetId !== $element->siteId) {
                     // check failed, revert values to default
                     $siteCopyEnabled = false;
                     $selectedSite = null;

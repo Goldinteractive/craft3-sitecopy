@@ -1,7 +1,7 @@
 {
   "name": "goldinteractive/craft3-sitecopy",
   "description": "",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "license": "MIT",
   "type": "craft-plugin",
   "minimum-stability": "dev",

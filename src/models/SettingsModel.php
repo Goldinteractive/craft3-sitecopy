@@ -19,7 +19,7 @@ class SettingsModel extends Model
     /**
      * @var string
      */
-    public $combinedSettingsCheckMethod = [];
+    public $combinedSettingsCheckMethod = '';
 
     /**
      * @return array
