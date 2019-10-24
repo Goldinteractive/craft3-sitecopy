@@ -75,7 +75,6 @@ class SiteCopy extends Component
     public function getSiteInputOptions(array $sites = [], $exclude = [])
     {
         $sites = $sites ?: Craft::$app->getSites()->getAllSites();
-
         $sites = array_map(
             function ($site) use ($exclude) {
                 if (!$site instanceof Site) {
@@ -135,8 +134,6 @@ class SiteCopy extends Component
             $targets = [$targets];
         }
 
-
-
         foreach ($supportedSites as $supportedSite) {
             $siteId = $supportedSite['siteId'];
             if(!$siteId)
@@ -148,7 +145,6 @@ class SiteCopy extends Component
                 null,
                 $siteId
             );
-            
             $matchingTarget = $targets === '*' || in_array($siteId, $targets);
 
             if ($siteElement && $matchingTarget && $entry->siteId !== $siteId) {
@@ -223,7 +219,6 @@ class SiteCopy extends Component
             'selectedSite'    => $selectedSite,
         ];
     }
-
 
 	public function handleSiteCopyActiveStateProduct(craft\commerce\elements\Product $element)
     {
