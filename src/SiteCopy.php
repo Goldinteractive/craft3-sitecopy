@@ -73,6 +73,34 @@ class SiteCopy extends Plugin
                     );
                 }
             );
+			
+            Craft::$app->view->hook(
+                'cp.commerce.product.edit.details',
+                function (array &$context) {
+                    $element = $context['product'];
+                    $isNew = $element->id === null;
+                    $sites = $element->getSupportedSites();
+
+                    if ($isNew || count($sites) < 2) {
+                        return;
+                    }
+
+                    $scas = $this->sitecopy->handleSiteCopyActiveStateProduct($element);
+
+                    $siteCopyEnabled = $scas['siteCopyEnabled'];
+                    $selectedSite = $scas['selectedSite'];
+
+                    return Craft::$app->view->renderTemplate(
+                        'sitecopy/_cp/entriesEditRightPane',
+                        [
+                            'siteId'          => $element->siteId,
+                            'supportedSites'  => $sites,
+                            'siteCopyEnabled' => $siteCopyEnabled,
+                            'selectedSite'    => $selectedSite,
+                        ]
+                    );
+                }
+            );
 
             Event::on(
                 Elements::class,
