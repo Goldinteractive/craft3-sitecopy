@@ -140,7 +140,7 @@ class SiteCopy extends Component
                 null,
                 $siteId
             );
-            $matchingTarget = $targets === '*' || in_array($siteId, $targets);
+            $matchingTarget = in_array($siteId, $targets);
 
             if ($siteElement && $matchingTarget && $entry->siteId !== $siteId) {
                 $fieldsLocation = Craft::$app->getRequest()->getParam('fieldsLocation', 'fields');
