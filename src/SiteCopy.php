@@ -60,7 +60,7 @@ class SiteCopy extends Plugin
                     $scas = $this->sitecopy->handleSiteCopyActiveState($element);
 
                     $siteCopyEnabled = $scas['siteCopyEnabled'];
-                    $selectedSite = $scas['selectedSite'];
+                    $selectedSites = $scas['selectedSites'];
 
                     return Craft::$app->view->renderTemplate(
                         'sitecopy/_cp/entriesEditRightPane',
@@ -68,7 +68,7 @@ class SiteCopy extends Plugin
                             'siteId'          => $element->siteId,
                             'supportedSites'  => $sites,
                             'siteCopyEnabled' => $siteCopyEnabled,
-                            'selectedSite'    => $selectedSite,
+                            'selectedSites'    => $selectedSites,
                         ]
                     );
                 }
@@ -76,7 +76,7 @@ class SiteCopy extends Plugin
 
             Event::on(
                 Elements::class,
-                Elements::EVENT_BEFORE_SAVE_ELEMENT,
+                Elements::EVENT_AFTER_SAVE_ELEMENT,
                 function (ElementEvent $event) {
                     $this->sitecopy->syncElementContent($event, Craft::$app->request->post('sitecopy', []));
                 }

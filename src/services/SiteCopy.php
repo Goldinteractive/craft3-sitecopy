@@ -227,9 +227,16 @@ class SiteCopy extends Component
             }
         }
 
+        // todo make multiple selected sites possible
+        $selectedSites = [];
+
+        if ($selectedSite) {
+            $selectedSites = [$selectedSite];
+        }
+
         return [
             'siteCopyEnabled' => $siteCopyEnabled,
-            'selectedSite'    => $selectedSite,
+            'selectedSites'   => $selectedSites,
         ];
     }
 
