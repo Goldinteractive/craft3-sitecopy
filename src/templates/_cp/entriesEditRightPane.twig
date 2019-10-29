@@ -13,7 +13,7 @@
 
     <div class="{{ siteCopyEnabled ? '' : 'hidden' }}" id="sitecopy-options">
         {# Intentionally passing non-empty array to uncheck "all" #}
-        {{ forms.radioGroupField({
+        {{ forms.checkboxGroupField({
             label: "To which site should it be copied?"|t('sitecopy'),
             id: 'siteCopy-targets',
             name: 'sitecopy[targets]',
