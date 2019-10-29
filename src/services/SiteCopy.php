@@ -12,6 +12,7 @@ use craft\base\Element;
 use craft\elements\Entry;
 use craft\events\ElementEvent;
 use craft\models\Site;
+use goldinteractive\sitecopy\jobs\SyncElementContent;
 use yii\base\Event;
 
 /**
@@ -108,6 +109,8 @@ class SiteCopy extends Component
     public function syncElementContent(ElementEvent $event, array $elementSettings)
     {
         /** @var Entry $entry */
+        // attention! this is not necessarily our localized entry
+        // the EVENT_AFTER_SAVE_ELEMENT gets called multiple times during the save, for each localized entry
         $entry = $event->element;
 
         if (!$entry instanceof Entry) {
@@ -118,6 +121,7 @@ class SiteCopy extends Component
             return;
         }
 
+        // we only want to add our task to the queue once
         self::$syncing = true;
 
         // elementSettings will be null in HUD, where we want to continue with defaults
@@ -133,6 +137,8 @@ class SiteCopy extends Component
             $targets = [$targets];
         }
 
+        $matchingSites = [];
+
         foreach ($supportedSites as $supportedSite) {
             $siteId = $supportedSite['siteId'];
             $siteElement = Craft::$app->elements->getElementById(
@@ -140,17 +146,29 @@ class SiteCopy extends Component
                 null,
                 $siteId
             );
+
             $matchingTarget = in_array($siteId, $targets);
 
-            if ($siteElement && $matchingTarget && $entry->siteId !== $siteId) {
-                $fieldsLocation = Craft::$app->getRequest()->getParam('fieldsLocation', 'fields');
-                $siteElement->setFieldValuesFromRequest($fieldsLocation);
-
-                Craft::$app->elements->saveElement($siteElement);
+            if ($siteElement && $matchingTarget) {
+                $matchingSites[] = (int)$siteId;
             }
         }
 
-        self::$syncing = false;
+        if (!empty($matchingSites)) {
+            $fieldsLocation = Craft::$app->getRequest()->getParam('fieldsLocation', 'fields');
+
+            $data = Craft::$app->getRequest()->getBodyParam($fieldsLocation);
+
+            if (!$data || !is_array($data)) {
+                return;
+            }
+
+            Craft::$app->getQueue()->push(new SyncElementContent([
+                'elementId' => (int)$entry->id,
+                'sites'     => $matchingSites,
+                'data'      => $data,
+            ]));
+        }
     }
 
     /**
