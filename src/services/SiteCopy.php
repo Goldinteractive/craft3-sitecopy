@@ -178,7 +178,7 @@ class SiteCopy extends Component
     public function handleSiteCopyActiveState(craft\elements\Entry $element)
     {
         $siteCopyEnabled = false;
-        $selectedSite = null;
+        $selectedSites = [];
 
         $settings = $this->getCombinedSettings();
 
@@ -212,7 +212,7 @@ class SiteCopy extends Component
 
                 if ($check && (int)$targetId !== $element->siteId) {
                     $siteCopyEnabled = true;
-                    $selectedSite = (int)$targetId;
+                    $selectedSites[] = (int)$targetId;
 
                     if ($settings['method'] == 'or') {
                         break;
@@ -220,18 +220,11 @@ class SiteCopy extends Component
                 } elseif ($settings['method'] == 'and' && (int)$targetId !== $element->siteId) {
                     // check failed, revert values to default
                     $siteCopyEnabled = false;
-                    $selectedSite = null;
+                    $selectedSites = [];
 
                     break;
                 }
             }
-        }
-
-        // todo make multiple selected sites possible
-        $selectedSites = [];
-
-        if ($selectedSite) {
-            $selectedSites = [$selectedSite];
         }
 
         return [
