@@ -75,10 +75,11 @@ class SiteCopy extends Component
     public function getSiteInputOptions(array $sites = [], $exclude = [])
     {
         $sites = $sites ?: Craft::$app->getSites()->getAllSites();
+
         $sites = array_map(
             function ($site) use ($exclude) {
                 if (!$site instanceof Site) {
-                    $siteId = $site['siteId'] ?? null;
+                    $siteId = $site['siteId'] ?? $site ?? null;
                     if ($siteId !== null) {
                         $site = Craft::$app->sites->getSiteById($siteId);
                     }
@@ -113,7 +114,7 @@ class SiteCopy extends Component
         // the EVENT_AFTER_SAVE_ELEMENT gets called multiple times during the save, for each localized entry
         $entry = $event->element;
 
-        if (!$entry instanceof Entry) {
+        if (!$entry instanceof Entry && !$entry instanceof craft\commerce\elements\Product) {
             return;
         }
 
@@ -141,6 +142,11 @@ class SiteCopy extends Component
 
         foreach ($supportedSites as $supportedSite) {
             $siteId = $supportedSite['siteId'];
+
+            if (!$siteId) {
+                $siteId = $supportedSite; // For Products as no siteId key exists
+            }
+
             $siteElement = Craft::$app->elements->getElementById(
                 $entry->id,
                 null,
@@ -172,10 +178,10 @@ class SiteCopy extends Component
     }
 
     /**
-     * @param Entry $element
+     * @param Entry|craft\commerce\elements\Product|object $element
      * @return array
      */
-    public function handleSiteCopyActiveState(craft\elements\Entry $element)
+    public function handleSiteCopyActiveState(object $element)
     {
         $siteCopyEnabled = false;
         $selectedSites = [];

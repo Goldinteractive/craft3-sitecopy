@@ -9,6 +9,7 @@ namespace goldinteractive\sitecopy;
 use craft\base\Plugin;
 
 use Craft;
+use craft\elements\Entry;
 use craft\events\ElementEvent;
 use craft\services\Elements;
 use craft\web\twig\variables\CraftVariable;
@@ -50,27 +51,18 @@ class SiteCopy extends Plugin
                 function (array &$context) {
                     /** @var $element craft\elements\Entry */
                     $element = $context['entry'];
-                    $isNew = $element->id === null;
-                    $sites = $element->getSupportedSites();
 
-                    if ($isNew || count($sites) < 2) {
-                        return;
-                    }
+                    return $this->editDetailsHook($element);
+                }
+            );
 
-                    $scas = $this->sitecopy->handleSiteCopyActiveState($element);
+            Craft::$app->view->hook(
+                'cp.commerce.product.edit.details',
+                function (array &$context) {
+                    /** @var $element craft\commerce\elements\Product */
+                    $element = $context['product'];
 
-                    $siteCopyEnabled = $scas['siteCopyEnabled'];
-                    $selectedSites = $scas['selectedSites'];
-
-                    return Craft::$app->view->renderTemplate(
-                        'sitecopy/_cp/entriesEditRightPane',
-                        [
-                            'siteId'          => $element->siteId,
-                            'supportedSites'  => $sites,
-                            'siteCopyEnabled' => $siteCopyEnabled,
-                            'selectedSites'    => $selectedSites,
-                        ]
-                    );
+                    return $this->editDetailsHook($element);
                 }
             );
 
@@ -102,5 +94,34 @@ class SiteCopy extends Plugin
             'criteriaFieldOptions'    => \goldinteractive\sitecopy\services\SiteCopy::getCriteriaFields(),
             'criteriaOperatorOptions' => \goldinteractive\sitecopy\services\SiteCopy::getOperators(),
         ]);
+    }
+
+    /**
+     * @param Entry|craft\commerce\elements\Product|object $element
+     * @return string|void
+     */
+    private function editDetailsHook(object $element)
+    {
+        $isNew = $element->id === null;
+        $sites = $element->getSupportedSites();
+
+        if ($isNew || count($sites) < 2) {
+            return;
+        }
+
+        $scas = $this->sitecopy->handleSiteCopyActiveState($element);
+
+        $siteCopyEnabled = $scas['siteCopyEnabled'];
+        $selectedSites = $scas['selectedSites'];
+
+        return Craft::$app->view->renderTemplate(
+            'sitecopy/_cp/entriesEditRightPane',
+            [
+                'siteId'          => $element->siteId,
+                'supportedSites'  => $sites,
+                'siteCopyEnabled' => $siteCopyEnabled,
+                'selectedSites'   => $selectedSites,
+            ]
+        );
     }
 }
