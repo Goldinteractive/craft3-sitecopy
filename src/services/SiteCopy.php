@@ -178,11 +178,16 @@ class SiteCopy extends Component
     }
 
     /**
-     * @param Entry|craft\commerce\elements\Product|object $element
+     * @param Entry|craft\commerce\elements\Product $element
      * @return array
+     * @throws \Exception
      */
-    public function handleSiteCopyActiveState(object $element)
+    public function handleSiteCopyActiveState($element)
     {
+        if (!is_object($element)) {
+            throw new \Exception('Given value must be an object!');
+        }
+
         $siteCopyEnabled = false;
         $selectedSites = [];
 
