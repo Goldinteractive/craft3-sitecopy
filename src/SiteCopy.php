@@ -8,7 +8,6 @@ namespace goldinteractive\sitecopy;
 
 use craft\base\Plugin;
 
-use stdClass;
 use Craft;
 use craft\elements\Entry;
 use craft\events\ElementEvent;
@@ -101,8 +100,12 @@ class SiteCopy extends Plugin
      * @param Entry|craft\commerce\elements\Product|stdClass $element
      * @return string|void
      */
-    private function editDetailsHook(stdClass $element)
+    private function editDetailsHook($element)
     {
+        if (!is_object($element)) {
+            throw new \Exception('Given value must be an object!');
+        }
+
         $isNew = $element->id === null;
         $sites = $element->getSupportedSites();
 
