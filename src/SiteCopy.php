@@ -99,9 +99,14 @@ class SiteCopy extends Plugin
     /**
      * @param Entry|craft\commerce\elements\Product|object $element
      * @return string|void
+     * @throws \Exception
      */
-    private function editDetailsHook(object $element)
+    private function editDetailsHook($element)
     {
+        if (!is_object($element)) {
+            throw new \Exception('Given value must be an object!');
+        }
+
         $isNew = $element->id === null;
         $sites = $element->getSupportedSites();
 
