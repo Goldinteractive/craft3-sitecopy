@@ -6,6 +6,7 @@
 
 namespace goldinteractive\sitecopy\services;
 
+use stdClass;
 use Craft;
 use craft\base\Component;
 use craft\base\Element;
@@ -178,10 +179,10 @@ class SiteCopy extends Component
     }
 
     /**
-     * @param Entry|craft\commerce\elements\Product|object $element
+     * @param Entry|craft\commerce\elements\Product|stdClass $element
      * @return array
      */
-    public function handleSiteCopyActiveState(object $element)
+    public function handleSiteCopyActiveState(stdClass $element)
     {
         $siteCopyEnabled = false;
         $selectedSites = [];
