@@ -45,3 +45,9 @@ This plugin requires Craft CMS 3.2 or later.
 ## Installation
 
 Install using `composer require goldinteractive/craft3-sitecopy` 
+
+## [Unreleased]
+
+### Choose the content you want to be copied
+In the plugin settings you can configure the content that gets copied from the current entry.
+Per default it copies only the entries content (without meta data like title and slug)

@@ -65,7 +65,15 @@ class SyncElementContent extends BaseJob
             /** @var Element $siteElement */
             $siteElement = $elementsService->getElementById($element->id, get_class($element), $siteId);
 
-            $siteElement->setFieldValues($this->data);
+            foreach ($this->data as $key => $item) {
+                if ($key == 'fields' || $key == 'fieldsLocation') {
+                    $siteElement->setFieldValues($item);
+                    continue;
+                }
+
+                // this is not possible for custom fields as of craft 3.4.0, make sure they dont reach this
+                $siteElement->{$key} = $item;
+            }
 
             $siteElement->setScenario(Element::SCENARIO_ESSENTIALS);
             $elementsService->saveElement($siteElement);

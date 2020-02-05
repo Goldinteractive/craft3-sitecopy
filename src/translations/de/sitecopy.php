@@ -8,6 +8,11 @@ return [
     'Copy to site'                       => 'Seite überschreiben',
     'To which site should it be copied?' => 'Welche Seite soll überschrieben werden?',
 
+    'Fields to copy'   => 'Felder zum Kopieren',
+    'Fields (Content)' => 'Felder (Inhalt)',
+    'Title'            => 'Titel',
+    'Slug'             => 'Slug',
+
     'Entry id'            => 'Eintrags Id',
     'Section (handle)'    => 'Sektion (handle)',
     'Entry type (handle)' => 'Eintrags Typ (handle)',

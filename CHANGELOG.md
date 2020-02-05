@@ -1,5 +1,9 @@
 # Changelog
 
+## unreleased
+### Added
+- Possibility to choose what fields you want to copy
+
 ## 0.4.1 - 2019-12-06
 ### Fixed
 - Fixed method parameter type "object" to ensure PHP 7.1 compatibility

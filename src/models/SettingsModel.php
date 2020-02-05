@@ -14,6 +14,11 @@ class SettingsModel extends Model
     /**
      * @var array
      */
+    public $attributesToCopy = ['fields'];
+
+    /**
+     * @var array
+     */
     public $combinedSettings = [];
 
     /**
@@ -27,9 +32,40 @@ class SettingsModel extends Model
     public function rules(): array
     {
         return [
+            [['attributesToCopy'], 'checkAttributesToCopy'],
             [['combinedSettings'], 'checkCombinedSettings'],
             [['combinedSettingsCheckMethod'], 'in', 'range' => ['and', 'or']],
         ];
+    }
+
+    /**
+     * Custom validation rule
+     */
+    public function checkAttributesToCopy()
+    {
+        $attributesToCopy = \goldinteractive\sitecopy\SiteCopy::getInstance()->sitecopy->getAttributesToCopyOptions();
+
+        $exactValues = [
+            array_map(function ($x) {
+                return $x['value'];
+            }, $attributesToCopy)
+        ];
+
+        if (!is_array($this->attributesToCopy)) {
+            $this->addError('attributesToCopy', 'invalid array');
+
+            return;
+        }
+
+        foreach ($exactValues as $key => $values) {
+            foreach ($this->attributesToCopy as $setting) {
+                if (!in_array($setting, $values)) {
+                    $this->addError('attributesToCopy', 'invalid value "' . $setting . '" for options "' . implode(',', $values) . '" given');
+
+                    break 2;
+                }
+            }
+        }
     }
 
     /**

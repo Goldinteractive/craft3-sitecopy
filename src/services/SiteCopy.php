@@ -9,10 +9,13 @@ namespace goldinteractive\sitecopy\services;
 use Craft;
 use craft\base\Component;
 use craft\base\Element;
+use craft\base\Model;
 use craft\elements\Entry;
 use craft\events\ElementEvent;
 use craft\models\Site;
+use Exception;
 use goldinteractive\sitecopy\jobs\SyncElementContent;
+use Throwable;
 use yii\base\Event;
 
 /**
@@ -22,6 +25,19 @@ use yii\base\Event;
  */
 class SiteCopy extends Component
 {
+    /**
+     * @var Model|null
+     */
+    private $settings = null;
+
+    public function init()
+    {
+        parent::init();
+
+        $this->settings = \goldinteractive\sitecopy\SiteCopy::getInstance()->getSettings();
+    }
+
+
     public static function getCriteriaFields()
     {
         return [
@@ -103,9 +119,32 @@ class SiteCopy extends Component
     }
 
     /**
+     * Get list of attributes to sync.
+     *
+     * @return array
+     */
+    public function getAttributesToCopyOptions()
+    {
+        return [
+            [
+                'value' => 'fields',
+                'label' => Craft::t('sitecopy', 'Fields (Content)'),
+            ],
+            [
+                'value' => 'title',
+                'label' => Craft::t('sitecopy', 'Title'),
+            ],
+            [
+                'value' => 'slug',
+                'label' => Craft::t('sitecopy', 'Slug'),
+            ],
+        ];
+    }
+
+    /**
      * @param ElementEvent $event
      * @param array        $elementSettings
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function syncElementContent(ElementEvent $event, array $elementSettings)
     {
@@ -127,6 +166,12 @@ class SiteCopy extends Component
 
         // elementSettings will be null in HUD, where we want to continue with defaults
         if ($elementSettings !== null && ($event->isNew || empty($elementSettings['enabled']))) {
+            return;
+        }
+
+        $attributesToCopy = $this->getAttributesToCopy();
+
+        if (empty($attributesToCopy)) {
             return;
         }
 
@@ -161,11 +206,24 @@ class SiteCopy extends Component
         }
 
         if (!empty($matchingSites)) {
-            $fieldsLocation = Craft::$app->getRequest()->getParam('fieldsLocation', 'fields');
+            $data = [];
 
-            $data = Craft::$app->getRequest()->getBodyParam($fieldsLocation);
+            foreach ($attributesToCopy as $attribute) {
+                // special case
+                if ($attribute == 'fields') {
+                    $attribute = Craft::$app->getRequest()->getParam('fieldsLocation', 'fields');
+                }
 
-            if (!$data || !is_array($data)) {
+                $tmp = Craft::$app->getRequest()->getBodyParam($attribute);
+
+                if (empty($tmp)) {
+                    continue;
+                }
+
+                $data[$attribute] = $tmp;
+            }
+
+            if (empty($data)) {
                 return;
             }
 
@@ -180,12 +238,12 @@ class SiteCopy extends Component
     /**
      * @param Entry|craft\commerce\elements\Product $element
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function handleSiteCopyActiveState($element)
     {
         if (!is_object($element)) {
-            throw new \Exception('Given value must be an object!');
+            throw new Exception('Given value must be an object!');
         }
 
         $siteCopyEnabled = false;
@@ -247,6 +305,18 @@ class SiteCopy extends Component
     /**
      * @return array
      */
+    public function getAttributesToCopy()
+    {
+        if ($this->settings && isset($this->settings->attributesToCopy) && is_array($this->settings->attributesToCopy)) {
+            return $this->settings->attributesToCopy;
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array
+     */
     public function getCombinedSettings()
     {
         $combinedSettings = [];
@@ -254,14 +324,12 @@ class SiteCopy extends Component
         // default set to or for backwards compatibility
         $combinedSettingsCheckMethod = 'or';
 
-        $settings = \goldinteractive\sitecopy\SiteCopy::getInstance()->getSettings();
-
-        if ($settings && isset($settings->combinedSettings) && is_array($settings->combinedSettings)) {
-            $combinedSettings = $settings->combinedSettings;
+        if ($this->settings && isset($this->settings->combinedSettings) && is_array($this->settings->combinedSettings)) {
+            $combinedSettings = $this->settings->combinedSettings;
         }
 
-        if ($settings && isset($settings->combinedSettingsCheckMethod) && is_string($settings->combinedSettingsCheckMethod)) {
-            $combinedSettingsCheckMethod = $settings->combinedSettingsCheckMethod;
+        if ($this->settings && isset($this->settings->combinedSettingsCheckMethod) && is_string($this->settings->combinedSettingsCheckMethod)) {
+            $combinedSettingsCheckMethod = $this->settings->combinedSettingsCheckMethod;
         }
 
         return ['settings' => $combinedSettings, 'method' => $combinedSettingsCheckMethod];

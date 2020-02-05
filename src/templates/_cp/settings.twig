@@ -1,5 +1,17 @@
 {% import '_includes/forms' as forms %}
 
+ {% set attributesToCopyOptions = craft.sitecopy.getAttributesToCopyOptions() %}
+
+{{ forms.checkboxGroupField({
+  label: "Fields to copy"|t('sitecopy'),
+  id: 'attributesToCopy',
+  name: 'attributesToCopy',
+  options: attributesToCopyOptions,
+  values: settings.attributesToCopy is not empty ? settings.attributesToCopy : [],
+}) }}
+
+{# combined settings #}
+
 {% set sourceOptions = [{value: '*', label: 'All Sites'|t('sitecopy')}] %}
 
 {% for site in craft.app.sites.getAllSites() %}
