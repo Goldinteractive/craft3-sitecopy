@@ -7,7 +7,7 @@ This plugin makes it easy to copy the content of an entry from a site to another
 ### Copy entry to another site
 
 After the installation you will find a new section in the edit entry view on the bottom right
-wher you can choose to copy the current entry to another site.
+where you can choose to copy the current entry to another site.
 
 It's even possible to copy the current entry to multiple sites. 
 
