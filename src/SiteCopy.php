@@ -13,6 +13,7 @@ use craft\elements\Entry;
 use craft\events\ElementEvent;
 use craft\services\Elements;
 use craft\web\twig\variables\CraftVariable;
+use Exception;
 use goldinteractive\sitecopy\models\SettingsModel;
 use yii\base\Event;
 
@@ -32,7 +33,7 @@ class SiteCopy extends Plugin
 
         $this->setComponents(
             [
-                'sitecopy' => \goldinteractive\sitecopy\services\SiteCopy::class,
+                'sitecopy' => services\SiteCopy::class,
             ]
         );
 
@@ -42,7 +43,7 @@ class SiteCopy extends Plugin
                 CraftVariable::EVENT_INIT,
                 function (Event $event) {
                     $variable = $event->sender;
-                    $variable->set('sitecopy', \goldinteractive\sitecopy\services\SiteCopy::class);
+                    $variable->set('sitecopy', services\SiteCopy::class);
                 }
             );
 
@@ -91,20 +92,20 @@ class SiteCopy extends Plugin
     {
         return Craft::$app->getView()->renderTemplate('sitecopy/_cp/settings', [
             'settings'                => $this->getSettings(),
-            'criteriaFieldOptions'    => \goldinteractive\sitecopy\services\SiteCopy::getCriteriaFields(),
-            'criteriaOperatorOptions' => \goldinteractive\sitecopy\services\SiteCopy::getOperators(),
+            'criteriaFieldOptions'    => services\SiteCopy::getCriteriaFields(),
+            'criteriaOperatorOptions' => services\SiteCopy::getOperators(),
         ]);
     }
 
     /**
      * @param Entry|craft\commerce\elements\Product|object $element
      * @return string|void
-     * @throws \Exception
+     * @throws Exception
      */
     private function editDetailsHook($element)
     {
         if (!is_object($element)) {
-            throw new \Exception('Given value must be an object!');
+            throw new Exception('Given value must be an object!');
         }
 
         $isNew = $element->id === null;
@@ -119,6 +120,8 @@ class SiteCopy extends Plugin
         $siteCopyEnabled = $scas['siteCopyEnabled'];
         $selectedSites = $scas['selectedSites'];
 
+        $currentSite = $element->siteId ?? null;
+
         return Craft::$app->view->renderTemplate(
             'sitecopy/_cp/entriesEditRightPane',
             [
@@ -126,6 +129,7 @@ class SiteCopy extends Plugin
                 'supportedSites'  => $sites,
                 'siteCopyEnabled' => $siteCopyEnabled,
                 'selectedSites'   => $selectedSites,
+                'currentSite'     => $currentSite,
             ]
         );
     }

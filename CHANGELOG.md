@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fixed
+- Craft 3.4 compatibility
+
 ## 0.5.0 - 2020-02-05
 ### Added
 - Possibility to choose what fields you want to copy

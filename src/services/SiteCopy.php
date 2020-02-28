@@ -12,6 +12,7 @@ use craft\base\Element;
 use craft\base\Model;
 use craft\elements\Entry;
 use craft\events\ElementEvent;
+use craft\helpers\ElementHelper;
 use craft\models\Site;
 use Exception;
 use goldinteractive\sitecopy\jobs\SyncElementContent;
@@ -36,7 +37,6 @@ class SiteCopy extends Component
 
         $this->settings = \goldinteractive\sitecopy\SiteCopy::getInstance()->getSettings();
     }
-
 
     public static function getCriteriaFields()
     {
@@ -149,11 +149,22 @@ class SiteCopy extends Component
     public function syncElementContent(ElementEvent $event, array $elementSettings)
     {
         /** @var Entry $entry */
-        // attention! this is not necessarily our localized entry
-        // the EVENT_AFTER_SAVE_ELEMENT gets called multiple times during the save, for each localized entry
+        // This is not necessarily our localized entry
+        // the EVENT_AFTER_SAVE_ELEMENT gets called multiple times during the save, for each localized entry and draft / revision
         $entry = $event->element;
+        $isDraftOrRevision = ElementHelper::isDraftOrRevision($entry);
 
-        if (!$entry instanceof Entry && !$entry instanceof craft\commerce\elements\Product) {
+        if (!$entry instanceof Entry && !$entry instanceof craft\commerce\elements\Product || $isDraftOrRevision) {
+            return;
+        }
+
+        // we cannot know where to copy the content from
+        if (empty($elementSettings['sourceSite'])) {
+            return;
+        }
+
+        // make sure we are in the correct localized entry
+        if ($entry->siteId !== $elementSettings['sourceSite']) {
             return;
         }
 
@@ -206,15 +217,13 @@ class SiteCopy extends Component
         }
 
         if (!empty($matchingSites)) {
-            $data = [];
-
             foreach ($attributesToCopy as $attribute) {
-                // special case
-                if ($attribute == 'fields') {
-                    $attribute = Craft::$app->getRequest()->getParam('fieldsLocation', 'fields');
-                }
-
                 $tmp = Craft::$app->getRequest()->getBodyParam($attribute);
+
+                // special case, we need to get the data from the model
+                if ($attribute == 'fields') {
+                    $tmp = $entry->getSerializedFieldValues();
+                }
 
                 if (empty($tmp)) {
                     continue;

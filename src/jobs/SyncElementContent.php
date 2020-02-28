@@ -66,7 +66,7 @@ class SyncElementContent extends BaseJob
             $siteElement = $elementsService->getElementById($element->id, get_class($element), $siteId);
 
             foreach ($this->data as $key => $item) {
-                if ($key == 'fields' || $key == 'fieldsLocation') {
+                if ($key == 'fields') {
                     $siteElement->setFieldValues($item);
                     continue;
                 }

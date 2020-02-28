@@ -20,5 +20,10 @@
             options: siteCopyTargetOptions,
             values: selectedSites ?? [],
         }) }}
+        {{ forms.hidden({
+            id: 'siteCopy-sourceSite',
+            name: 'sitecopy[sourceSite]',
+            value: currentSite ?? null,
+        }) }}
     </div>
 </div>
