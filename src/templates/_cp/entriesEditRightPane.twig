@@ -11,7 +11,7 @@
 
     {% set siteCopyTargetOptions = craft.sitecopy.getSiteInputOptions(supportedSites, [siteId]) %}
 
-    <div class="{{ siteCopyEnabled ? '' : 'hidden' }}" id="sitecopy-options">
+    <div class="{{ siteCopyEnabled ? '' : 'hidden' }}" id="sitecopy-options" style="padding-bottom: 1px;">
         {# Intentionally passing non-empty array to uncheck "all" #}
         {{ forms.checkboxGroupField({
             label: "To which site should it be copied?"|t('sitecopy'),
