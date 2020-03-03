@@ -6,8 +6,10 @@ This plugin makes it easy to copy the content of an entry from a site to another
 
 ### Copy entry to another site
 
-After the installation you will find a new section in the edit entry view on the bottom right
-where you can choose to copy the current entry to another site.
+When editing an entry at the bottom of the right panel you will find a toggle to enable
+site syncing. From there select the site that you want to overwrite with the currently
+visible content and then just save the entry like normal. Any content of the current
+site will be automatically copied to the selected site.
 
 It's even possible to copy the current entry to multiple sites. 
 
@@ -16,13 +18,6 @@ As the copy will trigger a queue the copy might be not instantaneous.
 ***Attention:*** This action will OVERWRITE all content from the selected site.
 
 ![Screenshot](resources/screenshots/screenshot1.png)
-
-When editing an entry at the bottom of the right panel you will find a toggle to enable
-site syncing. From there select the site that you want to overwrite with the currently
-visible content and then just save the entry like normal. Any content of the current
-site will be automatically copied to the selected site.
-
-***Attention:*** This action will OVERWRITE all content from the selected site.
 
 ### Craft Commerce
 
