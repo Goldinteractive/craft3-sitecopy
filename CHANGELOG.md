@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.2 - 2020-04-28
+### Fixed
+- Fixed a bug where integer site ids would break the plugin functionality ([#13](https://github.com/Goldinteractive/craft3-sitecopy/issues/13))
+
 ## 0.5.1 - 2020-03-02
 ### Fixed
 - Craft 3.4 compatibility

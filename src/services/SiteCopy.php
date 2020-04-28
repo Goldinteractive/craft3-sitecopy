@@ -164,7 +164,7 @@ class SiteCopy extends Component
         }
 
         // make sure we are in the correct localized entry
-        if ($entry->siteId !== $elementSettings['sourceSite']) {
+        if ($entry->siteId != $elementSettings['sourceSite']) {
             return;
         }
 
