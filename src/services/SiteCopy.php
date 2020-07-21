@@ -11,7 +11,9 @@ use craft\base\Component;
 use craft\base\Element;
 use craft\base\Model;
 use craft\elements\Entry;
+use craft\elements\MatrixBlock;
 use craft\events\ElementEvent;
+use craft\fields\Matrix;
 use craft\helpers\ElementHelper;
 use craft\models\Site;
 use Exception;
@@ -151,10 +153,10 @@ class SiteCopy extends Component
         /** @var Entry $entry */
         // This is not necessarily our localized entry
         // the EVENT_AFTER_SAVE_ELEMENT gets called multiple times during the save, for each localized entry and draft / revision
-        $entry = $event->element;
-        $isDraftOrRevision = ElementHelper::isDraftOrRevision($entry);
+        $sourceEntry = $event->element;
+        $isDraftOrRevision = ElementHelper::isDraftOrRevision($sourceEntry);
 
-        if (!$entry instanceof Entry && !$entry instanceof craft\commerce\elements\Product || $isDraftOrRevision) {
+        if (!$sourceEntry instanceof Entry && !$sourceEntry instanceof craft\commerce\elements\Product || $isDraftOrRevision) {
             return;
         }
 
@@ -164,7 +166,7 @@ class SiteCopy extends Component
         }
 
         // make sure we are in the correct localized entry
-        if ($entry->siteId != $elementSettings['sourceSite']) {
+        if ($sourceEntry->siteId != $elementSettings['sourceSite']) {
             return;
         }
 
@@ -186,7 +188,7 @@ class SiteCopy extends Component
             return;
         }
 
-        $supportedSites = $entry->getSupportedSites();
+        $supportedSites = $sourceEntry->getSupportedSites();
 
         $targets = $elementSettings['targets'] ?? [];
 
@@ -204,7 +206,7 @@ class SiteCopy extends Component
             }
 
             $siteElement = Craft::$app->elements->getElementById(
-                $entry->id,
+                $sourceEntry->id,
                 null,
                 $siteId
             );
@@ -215,14 +217,16 @@ class SiteCopy extends Component
                 $matchingSites[] = (int)$siteId;
             }
         }
-
+        
         if (!empty($matchingSites)) {
             foreach ($attributesToCopy as $attribute) {
                 $tmp = Craft::$app->getRequest()->getBodyParam($attribute);
 
                 // special case, we need to get the data from the model
                 if ($attribute == 'fields') {
-                    $tmp = $entry->getSerializedFieldValues();
+                    $tmp = $this->getUpdatesForElement($sourceEntry);
+                    $this->copyMatrixFieldsToTargetSites($sourceEntry, $matchingSites);
+                    $this->copySuperTableFieldsToTargetSites($sourceEntry, $matchingSites);
                 }
 
                 if (empty($tmp)) {
@@ -235,12 +239,81 @@ class SiteCopy extends Component
             if (empty($data)) {
                 return;
             }
-
+            
             Craft::$app->getQueue()->push(new SyncElementContent([
-                'elementId' => (int)$entry->id,
+                'elementId' => (int)$sourceEntry->id,
                 'sites'     => $matchingSites,
                 'data'      => $data,
             ]));
+        }
+    }
+
+    /**
+     * Get all fields from the source entry and return their values as array. This skips matrix 
+     * values 
+     */
+    private function getUpdatesForElement(Entry $sourceEntry): array {
+        $fields = $sourceEntry->getFieldLayout()->getFields();
+        $updates = [];
+        foreach($fields as $field) {
+            if($field instanceof \craft\fields\Matrix || $field instanceof \verbb\supertable\fields\SuperTableField) {
+                continue;
+            }
+
+            $updates[$field->handle] = $sourceEntry->getFieldValue($field->handle);
+        }
+
+        return $updates;
+    }
+
+     /**
+     * Copies all Matrix fields from the source Entry to the Target Sites. This copies the 
+     * full matrix and unfortunately works outside the queue logic because it needs to referece
+     * the correct source and target site, which is not possible in the current queue implementation.
+     *
+     * @param Entry $sourceEntry
+     * @param array $targetSiteIds
+     */
+    private function copyMatrixFieldsToTargetSites(Entry $sourceEntry, array $targetSiteIds) {
+        $fields = $sourceEntry->getFieldLayout()->getFields();
+        foreach($fields as $field) {
+            if($field instanceof \craft\fields\Matrix) {
+                foreach($targetSiteIds as $siteId) {
+                    $targetSite =  Craft::$app->elements->getElementById(
+                        $sourceEntry->id,
+                        null,
+                        $siteId
+                    );
+                    Craft::$app->getMatrix()
+                        ->duplicateBlocks($field, $sourceEntry, $targetSite);
+                }
+            } 
+        }
+    }
+
+    /**
+     * Copies all SuperTable fields from the source Entry to the Target Sites. This copies the 
+     * full SuperTable and unfortunately works outside the queue logic because it needs to referece
+     * the correct source and target site, which is not possible in the current queue implementation.
+     *
+     * @param Entry $sourceEntry
+     * @param array $targetSiteIds
+     */
+    private function copySuperTableFieldsToTargetSites(Entry $sourceEntry, array $targetSiteIds) {
+        $fields = $sourceEntry->getFieldLayout()->getFields();
+        foreach($fields as $field) {
+            if ($field instanceof \verbb\supertable\fields\SuperTableField) {
+                foreach($targetSiteIds as $siteId) {
+                    $targetSite =  Craft::$app->elements->getElementById(
+                        $sourceEntry->id,
+                        null,
+                        $siteId
+                    );
+                    \verbb\supertable\SuperTable::$plugin
+                        ->getService()
+                        ->duplicateBlocks($field, $sourceEntry, $targetSite);
+                }
+            }
         }
     }
 
