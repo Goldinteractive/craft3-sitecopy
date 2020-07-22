@@ -3,6 +3,7 @@
 ## 0.5.3 - 2020-07-22
 ### Changed
 - Changed implementation of OR to work with multiple sections
+- Small refactoring to improve code readability
 
 ### Added
 - Implemented Site Sync for matrix and supertable
