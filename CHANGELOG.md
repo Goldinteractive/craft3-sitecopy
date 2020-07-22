@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.3 - 2020-07-22
+### Changed
+- Changed implementation of OR to work with multiple sections
+
+### Added
+- Implemented Site Sync for matrix and supertable
+
 ## 0.5.2 - 2020-04-28
 ### Fixed
 - Fixed a bug where integer site ids would break the plugin functionality ([#13](https://github.com/Goldinteractive/craft3-sitecopy/issues/13))
