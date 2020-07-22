@@ -76,6 +76,7 @@ class SyncElementContent extends BaseJob
             }
 
             $siteElement->setScenario(Element::SCENARIO_ESSENTIALS);
+            $siteElement->propagating = true;
             $elementsService->saveElement($siteElement);
 
             $currentSite++;
