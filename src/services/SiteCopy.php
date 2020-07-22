@@ -153,12 +153,12 @@ class SiteCopy extends Component
         /** @var Entry $entry */
         // This is not necessarily our localized entry
         // the EVENT_AFTER_SAVE_ELEMENT gets called multiple times during the save, for each localized entry and draft / revision
-        $entry = $event->element;
-        $isDraftOrRevision = ElementHelper::isDraftOrRevision($entry);
-        if ($entry instanceof Matrix) {
+        $sourceEntry = $event->element;
+        $isDraftOrRevision = ElementHelper::isDraftOrRevision($sourceEntry);
+        if ($sourceEntry instanceof Matrix) {
             Craft::info("Matrix block found");
         }
-        if (!$entry instanceof Entry && !$entry instanceof craft\commerce\elements\Product || $isDraftOrRevision) {
+        if (!$sourceEntry instanceof Entry && !$sourceEntry instanceof craft\commerce\elements\Product || $isDraftOrRevision) {
             return;
         }
 
@@ -170,7 +170,7 @@ class SiteCopy extends Component
         }
 
         // make sure we are in the correct localized entry
-        if ($entry->siteId != $elementSettings['sourceSite']) {
+        if ($sourceEntry->siteId != $elementSettings['sourceSite']) {
             return;
         }
 
@@ -192,7 +192,7 @@ class SiteCopy extends Component
             return;
         }
 
-        $supportedSites = $entry->getSupportedSites();
+        $supportedSites = $sourceEntry->getSupportedSites();
 
         $targets = $elementSettings['targets'] ?? [];
 
@@ -203,22 +203,22 @@ class SiteCopy extends Component
         $matchingSites = [];
 
         foreach ($supportedSites as $supportedSite) {
-            $siteId = $supportedSite['siteId'];
+            $targetSiteId = $supportedSite['siteId'];
 
-            if (!$siteId) {
-                $siteId = $supportedSite; // For Products as no siteId key exists
+            if (!$targetSiteId) {
+                $targetSiteId = $supportedSite; // For Products as no siteId key exists
             }
 
-            $siteElement = Craft::$app->elements->getElementById(
-                $entry->id,
+            $targetSiteElement = Craft::$app->elements->getElementById(
+                $sourceEntry->id,
                 null,
-                $siteId
+                $targetSiteId
             );
 
-            $matchingTarget = in_array($siteId, $targets);
+            $matchingTarget = in_array($targetSiteId, $targets);
 
-            if ($siteElement && $matchingTarget) {
-                $matchingSites[] = (int)$siteId;
+            if ($targetSiteElement && $matchingTarget) {
+                $matchingSites[] = (int)$targetSiteId;
             }
         }
         
@@ -228,7 +228,7 @@ class SiteCopy extends Component
 
                 // special case, we need to get the data from the model
                 if ($attribute == 'fields') {
-                    $tmp = $this->getUpdatesForElement($entry);
+                    $tmp = $this->getUpdatesForElement($sourceEntry);
                 }
 
                 if (empty($tmp)) {
@@ -242,21 +242,21 @@ class SiteCopy extends Component
                 return;
             }
             Craft::$app->getQueue()->push(new SyncElementContent([
-                'elementId' => (int)$entry->id,
+                'elementId' => (int)$sourceEntry->id,
                 'sites'     => $matchingSites,
                 'data'      => $data,
             ]));
 
             Craft::$app->getQueue()->push(new SyncMatrixContent([
-                'elementId' => (int)$entry->id,
+                'elementId' => (int)$sourceEntry->id,
                 'sites'     => $matchingSites,
-                'elementSiteId'      => (int)$entry->siteId,
+                'elementSiteId'      => (int)$sourceEntry->siteId,
             ]));
 
             Craft::$app->getQueue()->push(new SyncSuperTableContent([
-                'elementId' => (int)$entry->id,
+                'elementId' => (int)$sourceEntry->id,
                 'sites'     => $matchingSites,
-                'elementSiteId'      => (int)$entry->siteId,
+                'elementSiteId'      => (int)$sourceEntry->siteId,
             ]));
         }
     }
