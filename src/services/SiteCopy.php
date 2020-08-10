@@ -222,7 +222,12 @@ class SiteCopy extends Component
 
                 // special case, we need to get the data from the model
                 if ($attribute == 'fields') {
-                    $tmp = $entry->getSerializedFieldValues();
+                    $refetchedEntry = Entry::find()
+                        ->id($entry->id)
+                        ->siteId($entry->siteId)
+                        ->one();
+
+                    $tmp = $refetchedEntry->getSerializedFieldValues();
                 }
 
                 if (empty($tmp)) {
