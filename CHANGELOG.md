@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.3 - 2020-08-10
+### Fixed
+- Fixed an issue where unchanged neo blocks on the target site would be wiped ([#19](https://github.com/Goldinteractive/craft3-sitecopy/issues/19))
+
 ## 0.5.2 - 2020-04-28
 ### Fixed
 - Fixed a bug where integer site ids would break the plugin functionality ([#13](https://github.com/Goldinteractive/craft3-sitecopy/issues/13))
