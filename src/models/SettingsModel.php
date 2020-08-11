@@ -34,7 +34,7 @@ class SettingsModel extends Model
         return [
             [['attributesToCopy'], 'checkAttributesToCopy'],
             [['combinedSettings'], 'checkCombinedSettings'],
-            [['combinedSettingsCheckMethod'], 'in', 'range' => ['and', 'or']],
+            [['combinedSettingsCheckMethod'], 'in', 'range' => ['and', 'or', 'xor']],
         ];
     }
 

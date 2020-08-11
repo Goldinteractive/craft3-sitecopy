@@ -297,7 +297,7 @@ class SiteCopy extends Component
                     $siteCopyEnabled = true;
                     $selectedSites[] = (int)$targetId;
 
-                    if ($settings['method'] == 'or') {
+                    if ($settings['method'] == 'xor') {
                         break;
                     }
                 } elseif ($settings['method'] == 'and' && (int)$targetId !== $element->siteId) {
@@ -335,8 +335,8 @@ class SiteCopy extends Component
     {
         $combinedSettings = [];
 
-        // default set to or for backwards compatibility
-        $combinedSettingsCheckMethod = 'or';
+        // default set to xor for backwards compatibility
+        $combinedSettingsCheckMethod = 'xor';
 
         if ($this->settings && isset($this->settings->combinedSettings) && is_array($this->settings->combinedSettings)) {
             $combinedSettings = $this->settings->combinedSettings;

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Changed
+- Automatic copy: Renamed current OR implementation to XOR and added new non-breaking "OR" check method.
+
 ## 0.5.3 - 2020-08-10
 ### Fixed
 - Fixed an issue where unchanged neo blocks on the target site would be wiped ([#19](https://github.com/Goldinteractive/craft3-sitecopy/issues/19))

@@ -25,6 +25,7 @@ use yii\base\Event;
  */
 class SiteCopy extends Plugin
 {
+    public $schemaVersion = '1.0.1';
     public $hasCpSettings = true;
 
     public function init()
