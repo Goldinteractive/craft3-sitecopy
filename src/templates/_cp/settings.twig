@@ -1,6 +1,8 @@
 {% import '_includes/forms' as forms %}
 
- {% set attributesToCopyOptions = craft.sitecopy.getAttributesToCopyOptions() %}
+{% set attributesToCopyOptions = craft.sitecopy.getAttributesToCopyOptions() %}
+
+<h2 class="first">{{ 'Entries'|t('sitecopy') }}</h2>
 
 {{ forms.checkboxGroupField({
   label: "Fields to copy"|t('sitecopy'),
@@ -55,6 +57,12 @@
     rows: settings.combinedSettings,
     addRowLabel: 'Add a criteria'|t('sitecopy'),
 }) }}
+
+<h2>{{ 'Globals'|t('sitecopy') }}</h2>
+
+TODO
+
+<h2>{{ 'Settings'|t('sitecopy') }}</h2>
 
 {{ forms.selectField({
     label: 'Criteria check method'|t('sitecopy'),
