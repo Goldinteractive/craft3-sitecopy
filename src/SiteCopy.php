@@ -10,6 +10,7 @@ use craft\base\Plugin;
 
 use Craft;
 use craft\elements\Entry;
+use craft\elements\GlobalSet;
 use craft\events\ElementEvent;
 use craft\services\Elements;
 use craft\web\twig\variables\CraftVariable;
@@ -49,12 +50,22 @@ class SiteCopy extends Plugin
             );
 
             Craft::$app->view->hook(
+                'cp.globals.edit.content',
+                function (array &$context) {
+                    /** @var $element GlobalSet */
+                    $element = $context['globalSet'];
+
+                    return $this->editDetailsHookGlobals($element);
+                }
+            );
+
+            Craft::$app->view->hook(
                 'cp.entries.edit.details',
                 function (array &$context) {
                     /** @var $element craft\elements\Entry */
                     $element = $context['entry'];
 
-                    return $this->editDetailsHook($element);
+                    return $this->editDetailsHookEntries($element);
                 }
             );
 
@@ -64,7 +75,7 @@ class SiteCopy extends Plugin
                     /** @var $element craft\commerce\elements\Product */
                     $element = $context['product'];
 
-                    return $this->editDetailsHook($element);
+                    return $this->editDetailsHookEntries($element);
                 }
             );
 
@@ -100,10 +111,14 @@ class SiteCopy extends Plugin
 
     /**
      * @param Entry|craft\commerce\elements\Product|object $element
+     * @param string                                       $template
      * @return string|void
-     * @throws Exception
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     * @throws \yii\base\Exception
      */
-    private function editDetailsHook($element)
+    private function editDetailsHook($element, string $template)
     {
         if (!is_object($element)) {
             throw new Exception('Given value must be an object!');
@@ -124,7 +139,7 @@ class SiteCopy extends Plugin
         $currentSite = $element->siteId ?? null;
 
         return Craft::$app->view->renderTemplate(
-            'sitecopy/_cp/entriesEditRightPane',
+            $template,
             [
                 'siteId'          => $element->siteId,
                 'supportedSites'  => $sites,
@@ -133,5 +148,16 @@ class SiteCopy extends Plugin
                 'currentSite'     => $currentSite,
             ]
         );
+    }
+
+    private function editDetailsHookEntries($element)
+    {
+       return $this->editDetailsHook($element, 'sitecopy/_cp/entriesEditRightPane');
+    }
+
+    private function editDetailsHookGlobals($element)
+    {
+        //todo own scas config
+        return $this->editDetailsHook($element, 'sitecopy/_cp/globalsEdit');
     }
 }

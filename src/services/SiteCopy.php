@@ -11,6 +11,7 @@ use craft\base\Component;
 use craft\base\Element;
 use craft\base\Model;
 use craft\elements\Entry;
+use craft\elements\GlobalSet;
 use craft\events\ElementEvent;
 use craft\helpers\ElementHelper;
 use craft\models\Site;
@@ -148,13 +149,13 @@ class SiteCopy extends Component
      */
     public function syncElementContent(ElementEvent $event, array $elementSettings)
     {
-        /** @var Entry $entry */
+        /** @var Entry|GlobalSet $entry */
         // This is not necessarily our localized entry
         // the EVENT_AFTER_SAVE_ELEMENT gets called multiple times during the save, for each localized entry and draft / revision
         $entry = $event->element;
         $isDraftOrRevision = ElementHelper::isDraftOrRevision($entry);
 
-        if (!$entry instanceof Entry && !$entry instanceof craft\commerce\elements\Product || $isDraftOrRevision) {
+        if ((!$entry instanceof Entry && !$entry instanceof craft\commerce\elements\Product && !$entry instanceof GlobalSet) || $isDraftOrRevision) {
             return;
         }
 
@@ -222,7 +223,13 @@ class SiteCopy extends Component
 
                 // special case, we need to get the data from the model
                 if ($attribute == 'fields') {
-                    $refetchedEntry = Entry::find()
+                    $queryStart = Entry::find();
+
+                    if ($entry instanceof GlobalSet) {
+                        $queryStart = GlobalSet::find();
+                    }
+
+                    $refetchedEntry = $queryStart
                         ->id($entry->id)
                         ->siteId($entry->siteId)
                         ->one();

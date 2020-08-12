@@ -1,0 +1,29 @@
+{% import "_includes/forms" as forms %}
+
+<div id="sitecopy" class="meta pane" style="margin-top: 50px;">
+    {{ forms.lightswitchField({
+        label: 'Copy to site'|t('sitecopy'),
+        id: 'siteCopy-toggle',
+        name: 'sitecopy[enabled]',
+        on: siteCopyEnabled,
+        toggle: '#sitecopy-options',
+    }) }}
+
+    {% set siteCopyTargetOptions = craft.sitecopy.getSiteInputOptions(supportedSites, [siteId]) %}
+
+    <div class="{{ siteCopyEnabled ? '' : 'hidden' }}" id="sitecopy-options" style="padding: 0 0 1px 24px;">
+        {# Intentionally passing non-empty array to uncheck "all" #}
+        {{ forms.checkboxGroupField({
+            label: "To which site should it be copied?"|t('sitecopy'),
+            id: 'siteCopy-targets',
+            name: 'sitecopy[targets]',
+            options: siteCopyTargetOptions,
+            values: selectedSites ?? [],
+        }) }}
+        {{ forms.hidden({
+            id: 'siteCopy-sourceSite',
+            name: 'sitecopy[sourceSite]',
+            value: currentSite ?? null,
+        }) }}
+    </div>
+</div>
