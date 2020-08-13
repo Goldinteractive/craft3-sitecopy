@@ -5,6 +5,8 @@
 - Ability to copy global sets
 ### Changed
 - Automatic copy: Renamed current OR implementation to XOR and added new non-breaking "OR" check method.
+### Fixed
+- Deactivated fields now get copied to the target site too ([#21](https://github.com/Goldinteractive/craft3-sitecopy/issues/21))
 
 ## 0.5.3 - 2020-08-10
 ### Fixed

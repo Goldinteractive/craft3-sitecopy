@@ -10,6 +10,7 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\base\Model;
+use craft\elements\db\ElementQuery;
 use craft\elements\Entry;
 use craft\elements\GlobalSet;
 use craft\events\ElementEvent;
@@ -18,7 +19,6 @@ use craft\models\Site;
 use Exception;
 use goldinteractive\sitecopy\jobs\SyncElementContent;
 use Throwable;
-use yii\base\Event;
 
 /**
  * Class SiteCopy
@@ -256,7 +256,7 @@ class SiteCopy extends Component
                         ->siteId($entry->siteId)
                         ->one();
 
-                    $tmp = $refetchedEntry->getSerializedFieldValues();
+                    $tmp = $this->getSerializedFieldValues($refetchedEntry);
                 }
 
                 if (empty($tmp)) {
@@ -276,6 +276,30 @@ class SiteCopy extends Component
                 'data'      => $data,
             ]));
         }
+    }
+
+    /**
+     * @param Entry|craft\commerce\elements\Product|GlobalSet $element
+     */
+    public function getSerializedFieldValues($element)
+    {
+        $fields = Craft::$app->fields->getFieldsByLayoutId($element->getFieldLayout()->id);
+        $serializedValues = [];
+
+        // fix for https://github.com/spicywebau/craft-neo/issues/391
+        // child elements of a disabled neo blocks will still be in the serialized response, but their parent not
+        // solution: copy all disabled blocks too
+        foreach ($fields as $field) {
+            $value = $element->getFieldValue($field->handle);
+
+            if ($value instanceof ElementQuery) {
+                $serializedValues[$field->handle] = $field->serializeValue($value->status([Element::STATUS_ENABLED, Element::STATUS_DISABLED]), $element);
+            } else {
+                $serializedValues[$field->handle] = $field->serializeValue($value, $element);
+            }
+        }
+
+        return $serializedValues;
     }
 
     /**
