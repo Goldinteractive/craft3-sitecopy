@@ -22,6 +22,11 @@ class SettingsModel extends Model
     public $combinedSettings = [];
 
     /**
+     * @var array
+     */
+    public $combinedSettingsGlobals = [];
+
+    /**
      * @var string
      */
     public $combinedSettingsCheckMethod = '';
@@ -33,7 +38,8 @@ class SettingsModel extends Model
     {
         return [
             [['attributesToCopy'], 'checkAttributesToCopy'],
-            [['combinedSettings'], 'checkCombinedSettings'],
+            [['combinedSettings'], 'checkCombinedSettingsEntries'],
+            [['combinedSettingsGlobals'], 'checkCombinedSettingsGlobals'],
             [['combinedSettingsCheckMethod'], 'in', 'range' => ['and', 'or', 'xor']],
         ];
     }
@@ -48,7 +54,7 @@ class SettingsModel extends Model
         $exactValues = [
             array_map(function ($x) {
                 return $x['value'];
-            }, $attributesToCopy)
+            }, $attributesToCopy),
         ];
 
         if (!is_array($this->attributesToCopy)) {
@@ -71,9 +77,18 @@ class SettingsModel extends Model
     /**
      * Custom validation rule
      */
-    public function checkCombinedSettings()
+    public function checkCombinedSettingsEntries()
     {
-        $criteriaFields = SiteCopy::getCriteriaFields();
+        $this->checkCombinedSettings('combinedSettings', SiteCopy::getCriteriaFieldsEntries());
+    }
+
+    public function checkCombinedSettingsGlobals()
+    {
+        $this->checkCombinedSettings('combinedSettingsGlobals', SiteCopy::getCriteriaFieldsGlobals());
+    }
+
+    public function checkCombinedSettings(string $attribute, array $criteriaFields)
+    {
         $operators = SiteCopy::getOperators();
 
         $exactValues = [
@@ -85,27 +100,27 @@ class SettingsModel extends Model
             }, $operators),
         ];
 
-        if (!is_array($this->combinedSettings)) {
-            $this->addError('combinedSettings', 'invalid array');
+        if (!is_array($this->{$attribute})) {
+            $this->addError($attribute, 'invalid array');
 
             return;
         }
 
         foreach ($exactValues as $key => $values) {
-            foreach ($this->combinedSettings as $setting) {
+            foreach ($this->{$attribute} as $setting) {
                 if (!in_array($setting[$key], $values)) {
-                    $this->addError('combinedSettings', 'invalid value "' . $setting[$key] . '" for options "' . implode(',', $values) . '" given');
+                    $this->addError($attribute, 'invalid value "' . $setting[$key] . '" for options "' . implode(',', $values) . '" given');
 
                     break 2;
                 }
             }
         }
 
-        foreach ($this->combinedSettings as $setting) {
+        foreach ($this->{$attribute} as $setting) {
             $setting = $setting[2] ?? null; // 2 = criteria value
 
             if (empty($setting)) {
-                $this->addError('combinedSettings', 'Criteria can\'t be empty');
+                $this->addError($attribute, 'Criteria can\'t be empty');
 
                 break;
             }

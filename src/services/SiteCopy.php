@@ -39,7 +39,7 @@ class SiteCopy extends Component
         $this->settings = \goldinteractive\sitecopy\SiteCopy::getInstance()->getSettings();
     }
 
-    public static function getCriteriaFields()
+    public static function getCriteriaFieldsEntries()
     {
         return [
             [
@@ -53,6 +53,24 @@ class SiteCopy extends Component
             [
                 'value' => 'section',
                 'label' => Craft::t('sitecopy', 'Section (handle)'),
+            ],
+            [
+                'value' => 'site',
+                'label' => Craft::t('sitecopy', 'Site (handle)'),
+            ],
+        ];
+    }
+
+    public static function getCriteriaFieldsGlobals()
+    {
+        return [
+            [
+                'value' => 'id',
+                'label' => Craft::t('sitecopy', 'Global set id'),
+            ],
+            [
+                'value' => 'handle',
+                'label' => Craft::t('sitecopy', 'Global set handle'),
             ],
             [
                 'value' => 'site',
@@ -181,7 +199,11 @@ class SiteCopy extends Component
             return;
         }
 
-        $attributesToCopy = $this->getAttributesToCopy();
+        if ($entry instanceof GlobalSet) {
+            $attributesToCopy = ['fields'];
+        } else {
+            $attributesToCopy = $this->getAttributesToCopy();
+        }
 
         if (empty($attributesToCopy)) {
             return;
@@ -257,7 +279,7 @@ class SiteCopy extends Component
     }
 
     /**
-     * @param Entry|craft\commerce\elements\Product $element
+     * @param Entry|craft\commerce\elements\Product|GlobalSet $element
      * @return array
      * @throws Exception
      */
@@ -270,7 +292,7 @@ class SiteCopy extends Component
         $siteCopyEnabled = false;
         $selectedSites = [];
 
-        $settings = $this->getCombinedSettings();
+        $settings = $this->getCombinedSettings($element);
 
         foreach ($settings['settings'] as $setting) {
             $criteriaField = $setting[0] ?? null;
@@ -286,8 +308,8 @@ class SiteCopy extends Component
 
                 $checkFrom = false;
 
-                if ($criteriaField === 'id') {
-                    $checkFrom = $element->id;
+                if ($criteriaField === 'id' || $criteriaField === 'handle') {
+                    $checkFrom = $element->{$criteriaField};
                 } elseif (isset($element[$criteriaField]['handle'])) {
                     $checkFrom = $element[$criteriaField]['handle'];
                 }
@@ -336,17 +358,25 @@ class SiteCopy extends Component
     }
 
     /**
+     * @param Entry|craft\commerce\elements\Product|GlobalSet $element
+     *
      * @return array
      */
-    public function getCombinedSettings()
+    public function getCombinedSettings($element)
     {
         $combinedSettings = [];
 
         // default set to xor for backwards compatibility
         $combinedSettingsCheckMethod = 'xor';
 
-        if ($this->settings && isset($this->settings->combinedSettings) && is_array($this->settings->combinedSettings)) {
-            $combinedSettings = $this->settings->combinedSettings;
+        $attribute = 'combinedSettings';
+
+        if ($element instanceof GlobalSet) {
+            $attribute = 'combinedSettingsGlobals';
+        }
+
+        if ($this->settings && isset($this->settings->{$attribute}) && is_array($this->settings->{$attribute})) {
+            $combinedSettings = $this->settings->{$attribute};
         }
 
         if ($this->settings && isset($this->settings->combinedSettingsCheckMethod) && is_string($this->settings->combinedSettingsCheckMethod)) {

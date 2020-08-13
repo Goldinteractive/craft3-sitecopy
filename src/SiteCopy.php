@@ -103,9 +103,10 @@ class SiteCopy extends Plugin
     protected function settingsHtml()
     {
         return Craft::$app->getView()->renderTemplate('sitecopy/_cp/settings', [
-            'settings'                => $this->getSettings(),
-            'criteriaFieldOptions'    => services\SiteCopy::getCriteriaFields(),
-            'criteriaOperatorOptions' => services\SiteCopy::getOperators(),
+            'settings'                    => $this->getSettings(),
+            'criteriaFieldOptionsEntries' => services\SiteCopy::getCriteriaFieldsEntries(),
+            'criteriaFieldOptionsGlobals' => services\SiteCopy::getCriteriaFieldsGlobals(),
+            'criteriaOperatorOptions'     => services\SiteCopy::getOperators(),
         ]);
     }
 
@@ -152,7 +153,7 @@ class SiteCopy extends Plugin
 
     private function editDetailsHookEntries($element)
     {
-       return $this->editDetailsHook($element, 'sitecopy/_cp/entriesEditRightPane');
+        return $this->editDetailsHook($element, 'sitecopy/_cp/entriesEditRightPane');
     }
 
     private function editDetailsHookGlobals($element)
