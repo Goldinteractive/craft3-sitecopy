@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.6.0 - 2020-08-13
 ### Added
 - Ability to copy global sets
 ### Changed
