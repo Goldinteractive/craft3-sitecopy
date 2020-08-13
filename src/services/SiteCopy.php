@@ -369,7 +369,7 @@ class SiteCopy extends Component
         // default set to xor for backwards compatibility
         $combinedSettingsCheckMethod = 'xor';
 
-        $attribute = 'combinedSettings';
+        $attribute = 'combinedSettingsEntries';
 
         if ($element instanceof GlobalSet) {
             $attribute = 'combinedSettingsGlobals';

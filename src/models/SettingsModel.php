@@ -17,9 +17,15 @@ class SettingsModel extends Model
     public $attributesToCopy = ['fields'];
 
     /**
+     * @deprecated keep for migration
      * @var array
      */
     public $combinedSettings = [];
+
+    /**
+     * @var array
+     */
+    public $combinedSettingsEntries = [];
 
     /**
      * @var array
@@ -38,7 +44,7 @@ class SettingsModel extends Model
     {
         return [
             [['attributesToCopy'], 'checkAttributesToCopy'],
-            [['combinedSettings'], 'checkCombinedSettingsEntries'],
+            [['combinedSettingsEntries'], 'checkCombinedSettingsEntries'],
             [['combinedSettingsGlobals'], 'checkCombinedSettingsGlobals'],
             [['combinedSettingsCheckMethod'], 'in', 'range' => ['and', 'or', 'xor']],
         ];
@@ -79,7 +85,7 @@ class SettingsModel extends Model
      */
     public function checkCombinedSettingsEntries()
     {
-        $this->checkCombinedSettings('combinedSettings', SiteCopy::getCriteriaFieldsEntries());
+        $this->checkCombinedSettings('combinedSettingsEntries', SiteCopy::getCriteriaFieldsEntries());
     }
 
     public function checkCombinedSettingsGlobals()
