@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+### Added
+- Ability to copy global sets
 ### Changed
 - Automatic copy: Renamed current OR implementation to XOR and added new non-breaking "OR" check method.
 

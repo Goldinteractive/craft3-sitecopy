@@ -19,6 +19,10 @@ As the copy will trigger a queue the copy might be not instantaneous.
 
 ![Screenshot](resources/screenshots/screenshot1.png)
 
+### Global Sets
+
+In addition to entries, you can also copy global sets. You will find the toggle at the very bottom of the global set content.
+
 ### Craft Commerce
 
 This plugin is compatible with Craft Commerce products.
