@@ -220,10 +220,10 @@ class SiteCopy extends Component
         $matchingSites = [];
 
         foreach ($supportedSites as $supportedSite) {
-            $siteId = $supportedSite['siteId'];
+            $siteId = $supportedSite;  // For Products as no siteId key exists
 
-            if (!$siteId) {
-                $siteId = $supportedSite; // For Products as no siteId key exists
+            if (is_array($siteId) && isset($siteId['siteId'])) {
+                $siteId = $siteId['siteId'];
             }
 
             $siteElement = Craft::$app->elements->getElementById(

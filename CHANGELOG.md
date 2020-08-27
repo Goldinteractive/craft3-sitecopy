@@ -1,10 +1,16 @@
 # Changelog
 
+## 0.6.1 - 2020-08-27
+### Fixed
+- Possible error when trying to copy global set ([#23](https://github.com/Goldinteractive/craft3-sitecopy/issues/23))
+
 ## 0.6.0 - 2020-08-13
 ### Added
 - Ability to copy global sets
+
 ### Changed
 - Automatic copy: Renamed current OR implementation to XOR and added new non-breaking "OR" check method.
+
 ### Fixed
 - Deactivated fields now get copied to the target site too ([#21](https://github.com/Goldinteractive/craft3-sitecopy/issues/21))
 
