@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2 - 2020-09-02
+### Fixed
+- Fixed an error that would be thrown when copying a deactivated entry
+
 ## 0.6.1 - 2020-08-27
 ### Fixed
 - Possible error when trying to copy global set ([#23](https://github.com/Goldinteractive/craft3-sitecopy/issues/23))

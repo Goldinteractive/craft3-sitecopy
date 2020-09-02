@@ -254,6 +254,7 @@ class SiteCopy extends Component
                     $refetchedEntry = $queryStart
                         ->id($entry->id)
                         ->siteId($entry->siteId)
+                        ->anyStatus()
                         ->one();
 
                     $tmp = $this->getSerializedFieldValues($refetchedEntry);
