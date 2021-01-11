@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3 - 2021-01-11
+### Fixed
+- Fixed an error that was thrown on copy of a craft commerce product
+
 ## 0.6.2 - 2020-09-02
 ### Fixed
 - Fixed an error that would be thrown when copying a deactivated entry
