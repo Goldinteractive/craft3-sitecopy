@@ -251,6 +251,10 @@ class SiteCopy extends Component
                         $queryStart = GlobalSet::find();
                     }
 
+                    if ($entry instanceof craft\commerce\elements\Product) {
+                        $queryStart = craft\commerce\elements\Product::find();
+                    }
+
                     $refetchedEntry = $queryStart
                         ->id($entry->id)
                         ->siteId($entry->siteId)
