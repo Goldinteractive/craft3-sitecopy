@@ -10,6 +10,7 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\base\Model;
+use craft\elements\Asset;
 use craft\elements\db\ElementQuery;
 use craft\elements\Entry;
 use craft\elements\GlobalSet;
@@ -71,6 +72,24 @@ class SiteCopy extends Component
             [
                 'value' => 'handle',
                 'label' => Craft::t('sitecopy', 'Global set handle'),
+            ],
+            [
+                'value' => 'site',
+                'label' => Craft::t('sitecopy', 'Site (handle)'),
+            ],
+        ];
+    }
+
+    public static function getCriteriaFieldsAssets()
+    {
+        return [
+            [
+                'value' => 'id',
+                'label' => Craft::t('sitecopy', 'Asset id'),
+            ],
+            [
+                'value' => 'volume',
+                'label' => Craft::t('sitecopy', 'Volume (handle)'),
             ],
             [
                 'value' => 'site',
@@ -173,7 +192,7 @@ class SiteCopy extends Component
         $entry = $event->element;
         $isDraftOrRevision = ElementHelper::isDraftOrRevision($entry);
 
-        if ((!$entry instanceof Entry && !$entry instanceof craft\commerce\elements\Product && !$entry instanceof GlobalSet) || $isDraftOrRevision) {
+        if ((!$entry instanceof Entry && !$entry instanceof craft\commerce\elements\Product && !$entry instanceof GlobalSet && !$entry instanceof Asset) || $isDraftOrRevision) {
             return;
         }
 
@@ -201,7 +220,9 @@ class SiteCopy extends Component
 
         if ($entry instanceof GlobalSet) {
             $attributesToCopy = ['fields'];
-        } else {
+        }elseif ($entry instanceof Asset) {
+            $attributesToCopy = ['fields']; // todo maybe title too?
+        }else {
             $attributesToCopy = $this->getAttributesToCopy();
         }
 
@@ -253,6 +274,10 @@ class SiteCopy extends Component
 
                     if ($entry instanceof craft\commerce\elements\Product) {
                         $queryStart = craft\commerce\elements\Product::find();
+                    }
+
+                    if ($entry instanceof Asset) {
+                        $queryStart = Asset::find();
                     }
 
                     $refetchedEntry = $queryStart
@@ -308,7 +333,7 @@ class SiteCopy extends Component
     }
 
     /**
-     * @param Entry|craft\commerce\elements\Product|GlobalSet $element
+     * @param Entry|craft\commerce\elements\Product|GlobalSet|Asset $element
      * @return array
      * @throws Exception
      */
@@ -387,7 +412,7 @@ class SiteCopy extends Component
     }
 
     /**
-     * @param Entry|craft\commerce\elements\Product|GlobalSet $element
+     * @param Entry|craft\commerce\elements\Product|GlobalSet|Asset $element
      *
      * @return array
      */
@@ -402,6 +427,8 @@ class SiteCopy extends Component
 
         if ($element instanceof GlobalSet) {
             $attribute = 'combinedSettingsGlobals';
+        }elseif ($element instanceof Asset) {
+            $attribute = 'combinedSettingsAssets';
         }
 
         if ($this->settings && isset($this->settings->{$attribute}) && is_array($this->settings->{$attribute})) {

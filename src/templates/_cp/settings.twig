@@ -96,6 +96,43 @@
     addRowLabel: 'Add a criteria'|t('sitecopy'),
 }) }}
 
+<h2>{{ 'Assets'|t('sitecopy') }}</h2>
+
+{% set cols = [
+    {
+        type: 'select',
+        heading: 'Criteria'|t('sitecopy'),
+        options: criteriaFieldOptionsAssets,
+    },
+    {
+        type: 'select',
+        options: criteriaOperatorOptions,
+    },
+    {
+        type: 'text',
+        heading: 'Value'|t('sitecopy'),
+    },
+    {
+        type: 'select',
+        heading: 'Source site'|t('sitecopy'),
+        options: sourceOptions,
+    },
+    {
+        type: 'select',
+        heading: 'Target site'|t('sitecopy'),
+        options: targetOptions,
+    }
+] %}
+
+{{ forms.editableTableField({
+    label: 'Automatic copy (optional)'|t('sitecopy'),
+    instructions: 'Criterias for cases where the contents should be automatically copied from site x to site y.'|t('sitecopy'),
+    name: 'combinedSettingsAssets',
+    id: 'combinedSettingsAssets',
+    cols: cols,
+    rows: settings.combinedSettingsAssets,
+    addRowLabel: 'Add a criteria'|t('sitecopy'),
+}) }}
 
 <h2>{{ 'Settings'|t('sitecopy') }}</h2>
 

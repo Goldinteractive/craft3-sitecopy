@@ -36,5 +36,7 @@ return [
     'Decide if the criteria are mutually exclusive (OR), everything needs to be true (AND) or if it should break after the first matching statement (XOR).' => 'Sollen die Kriteren sich gegenseitig ausschliessen (OR), muss alles zutreffen (AND) oder soll nur das erste zutreffende Kriterium beachtet werden? (XOR)',
     'Global set id'                                                                                                                                         => 'Global Id',
     'Global set handle'                                                                                                                                     => 'Global handle',
-
+    'Asset id'                                                                                                                                              => 'Datei Id',
+    'Assets'                                                                                                                                                => 'Dateien',
+    'Volume (handle)'                                                                                                                                       => 'Volumen (handle)',
 ];

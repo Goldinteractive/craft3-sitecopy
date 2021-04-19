@@ -9,6 +9,7 @@ namespace goldinteractive\sitecopy;
 use craft\base\Plugin;
 
 use Craft;
+use craft\elements\Asset;
 use craft\elements\Entry;
 use craft\elements\GlobalSet;
 use craft\events\ElementEvent;
@@ -60,6 +61,16 @@ class SiteCopy extends Plugin
             );
 
             Craft::$app->view->hook(
+                'cp.assets.edit.meta',
+                function (array &$context) {
+                    /** @var $element Asset */
+                    $element = $context['element'];
+
+                    return $this->editDetailsHookAssets($element);
+                }
+            );
+
+            Craft::$app->view->hook(
                 'cp.entries.edit.details',
                 function (array &$context) {
                     /** @var $element craft\elements\Entry */
@@ -106,6 +117,7 @@ class SiteCopy extends Plugin
             'settings'                    => $this->getSettings(),
             'criteriaFieldOptionsEntries' => services\SiteCopy::getCriteriaFieldsEntries(),
             'criteriaFieldOptionsGlobals' => services\SiteCopy::getCriteriaFieldsGlobals(),
+            'criteriaFieldOptionsAssets'  => services\SiteCopy::getCriteriaFieldsAssets(),
             'criteriaOperatorOptions'     => services\SiteCopy::getOperators(),
         ]);
     }
@@ -160,5 +172,10 @@ class SiteCopy extends Plugin
     {
         //todo own scas config
         return $this->editDetailsHook($element, 'sitecopy/_cp/globalsEdit');
+    }
+
+    private function editDetailsHookAssets($element)
+    {
+        return $this->editDetailsHook($element, 'sitecopy/_cp/entriesEditRightPane');
     }
 }

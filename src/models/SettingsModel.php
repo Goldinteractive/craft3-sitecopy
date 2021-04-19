@@ -33,6 +33,11 @@ class SettingsModel extends Model
     public $combinedSettingsGlobals = [];
 
     /**
+     * @var array
+     */
+    public $combinedSettingsAssets = [];
+
+    /**
      * @var string
      */
     public $combinedSettingsCheckMethod = '';
@@ -46,6 +51,7 @@ class SettingsModel extends Model
             [['attributesToCopy'], 'checkAttributesToCopy'],
             [['combinedSettingsEntries'], 'checkCombinedSettingsEntries'],
             [['combinedSettingsGlobals'], 'checkCombinedSettingsGlobals'],
+            [['combinedSettingsAssets'], 'checkCombinedSettingsAssets'],
             [['combinedSettingsCheckMethod'], 'in', 'range' => ['and', 'or', 'xor']],
         ];
     }
@@ -91,6 +97,11 @@ class SettingsModel extends Model
     public function checkCombinedSettingsGlobals()
     {
         $this->checkCombinedSettings('combinedSettingsGlobals', SiteCopy::getCriteriaFieldsGlobals());
+    }
+
+    public function checkCombinedSettingsAssets()
+    {
+        $this->checkCombinedSettings('combinedSettingsAssets', SiteCopy::getCriteriaFieldsAssets());
     }
 
     public function checkCombinedSettings(string $attribute, array $criteriaFields)
