@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.4 - 2021-04-21
+### Added
+- Ability to copy asset fields
+
 ## 0.6.3 - 2021-01-11
 ### Fixed
 - Fixed an error that was thrown on copy of a craft commerce product
