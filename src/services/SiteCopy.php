@@ -218,12 +218,14 @@ class SiteCopy extends Component
             return;
         }
 
+        $selectedAttributes = $this->getAttributesToCopy();
+
         if ($entry instanceof GlobalSet) {
             $attributesToCopy = ['fields'];
         }elseif ($entry instanceof Asset) {
-            $attributesToCopy = ['fields']; // todo maybe title too?
+            $attributesToCopy = $selectedAttributes;
         }else {
-            $attributesToCopy = $this->getAttributesToCopy();
+            $attributesToCopy = $selectedAttributes;
         }
 
         if (empty($attributesToCopy)) {

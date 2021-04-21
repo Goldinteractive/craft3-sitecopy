@@ -2,8 +2,6 @@
 
 {% set attributesToCopyOptions = craft.sitecopy.getAttributesToCopyOptions() %}
 
-<h2 class="first">{{ 'Entries'|t('sitecopy') }}</h2>
-
 {{ forms.checkboxGroupField({
   label: "Fields to copy"|t('sitecopy'),
   id: 'attributesToCopy',
@@ -11,6 +9,8 @@
   options: attributesToCopyOptions,
   values: settings.attributesToCopy is not empty ? settings.attributesToCopy : [],
 }) }}
+
+<h2 class="first">{{ 'Entries'|t('sitecopy') }}</h2>
 
 {# combined settings #}
 
