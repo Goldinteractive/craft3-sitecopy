@@ -2,6 +2,13 @@
 
 This plugin makes it easy to copy the content of an entry from a site to another.
 
+### Supported elements
+
+- Entries
+- Global sets
+- Assets
+- Craft commerce products
+
 ## Using the SiteCopy plugin
 
 ### Copy entry to another site
@@ -19,9 +26,9 @@ As the copy will trigger a queue the copy might be not instantaneous.
 
 ![Screenshot](resources/screenshots/screenshot1.png)
 
-### Global Sets
+### Global Sets and assets
 
-In addition to entries, you can also copy global sets. You will find the toggle at the very bottom of the global set content.
+In addition to entries, you can also copy global sets and assets. For global sets, you will find the toggle at the very bottom of the content.
 
 ### Craft Commerce
 
