@@ -5,8 +5,8 @@
  */
 
 return [
-    'Copy to site'                       => 'Seite überschreiben',
-    'To which site should it be copied?' => 'Welche Seite soll überschrieben werden?',
+    'Copy to site'                       => 'Auf eine andere Seite kopieren',
+    'To which site should it be copied?' => 'Auf welche Seite soll (der Eintrag) kopiert werden?',
 
     'Entries'  => 'Einträge',
     'Globals'  => 'Globale Inhalte',
