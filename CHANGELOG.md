@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.5 - 2021-11-23
+### Changed
+- Better German translations
+
 ## 0.6.4 - 2021-04-21
 ### Added
 - Ability to copy asset fields
