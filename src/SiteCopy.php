@@ -17,7 +17,10 @@ use craft\services\Elements;
 use craft\web\twig\variables\CraftVariable;
 use Exception;
 use goldinteractive\sitecopy\models\SettingsModel;
+use goldinteractive\sitecopy\SiteCopyAsset;
 use yii\base\Event;
+use craft\events\TemplateEvent;
+use craft\web\View;
 
 /**
  * @author    Gold Interactive
@@ -41,6 +44,21 @@ class SiteCopy extends Plugin
         );
 
         if (Craft::$app->getRequest()->getIsCpRequest()) {
+
+            Event::on(
+                View::class,
+                View::EVENT_BEFORE_RENDER_TEMPLATE,
+                function (TemplateEvent $event) {
+                    
+                    // Get view
+                    $view = Craft::$app->getView();
+
+                    // Load JS file
+                    $view->registerAssetBundle(SiteCopyAsset::class);
+
+                }
+            );
+
             Event::on(
                 CraftVariable::class,
                 CraftVariable::EVENT_INIT,
