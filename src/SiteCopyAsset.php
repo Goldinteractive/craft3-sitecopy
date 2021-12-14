@@ -14,7 +14,7 @@ class SiteCopyAsset extends AssetBundle
 	public function init()
 	{
 		// define the path that your publishable resources live
-        $this->sourcePath = '@goldinteractive/sitecopy/resources';
+        $this->sourcePath = '@goldinteractive/sitecopy/resources/js';
 
         // define the dependencies
         $this->depends = [
