@@ -184,7 +184,7 @@ class SiteCopy extends Component
      * @param array        $elementSettings
      * @throws Throwable
      */
-    public function syncElementContent(ElementEvent $event, array $elementSettings)
+    public function syncElementContent(ElementEvent $event, array $elementSettings, ?int $draftId)
     {
         /** @var Entry|GlobalSet $entry */
         // This is not necessarily our localized entry
@@ -282,13 +282,38 @@ class SiteCopy extends Component
                         $queryStart = Asset::find();
                     }
 
-                    $refetchedEntry = $queryStart
+                    // option with draftId
+                    if ($entry instanceof Entry && $draftId) {
+                        $draftOf = Entry::find()
+                        ->draftId($draftId)
+                        ->siteId($entry->siteId)
+                        ->provisionalDrafts()
+                        ->anyStatus()
+                        ->one();
+                    }
+
+                    // option with latest provisional draft
+                    /*if ($entry instanceof Entry) {
+                        $draftOf = Entry::find()
+                        ->draftOf($entry->id)
+                        ->siteId($entry->siteId)
+                        ->provisionalDrafts()
+                        ->anyStatus()
+                        ->one();
+                    }*/
+
+                    if (isset($draftOf) && $draftOf !== null) {
+                        $refetchedEntry = $draftOf;
+                    }else {
+                        $refetchedEntry = $queryStart
                         ->id($entry->id)
                         ->siteId($entry->siteId)
                         ->anyStatus()
                         ->one();
+                    }
 
                     $tmp = $this->getSerializedFieldValues($refetchedEntry);
+                  
                 }
 
                 if (empty($tmp)) {
