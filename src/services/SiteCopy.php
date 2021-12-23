@@ -292,16 +292,6 @@ class SiteCopy extends Component
                         ->one();
                     }
 
-                    // option with latest provisional draft
-                    /*if ($entry instanceof Entry) {
-                        $draftOf = Entry::find()
-                        ->draftOf($entry->id)
-                        ->siteId($entry->siteId)
-                        ->provisionalDrafts()
-                        ->anyStatus()
-                        ->one();
-                    }*/
-
                     if (isset($draftOf) && $draftOf !== null) {
                         $refetchedEntry = $draftOf;
                     }else {
