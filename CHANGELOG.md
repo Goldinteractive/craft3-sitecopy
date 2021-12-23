@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 - 2021-12-23
+### Changed
+- Sitecopy now requires craft 3.7 or later
+### Fixed
+- Fixed compatibility for new craft 3.7 draft system ([#28](https://github.com/Goldinteractive/craft3-sitecopy/issues/28))
+
 ## 0.6.5 - 2021-11-23
 ### Changed
 - Better German translations
