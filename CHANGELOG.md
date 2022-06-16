@@ -2,7 +2,7 @@
 
 ## 0.7.1 - 2022-06-16
 ### Fixed
-- Fixed a bug on siteGroups where element sections are disabled for the primary entry
+- Fixed a bug on siteGroups where element sections are disabled for the primary site
 
 ## 0.7.0 - 2021-12-23
 ### Changed
