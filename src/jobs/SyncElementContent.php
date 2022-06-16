@@ -45,9 +45,12 @@ class SyncElementContent extends BaseJob
     {
         $elementsService = Craft::$app->getElements();
 
-        // use data only from $this->data, never from this element
-        // we cant be sure its the right localized element
-        $element = $elementsService->getElementById($this->elementId);
+        if (empty($this->sites)) {
+            return;
+        }
+
+        // get element from a supported site, not important which one
+        $element = $elementsService->getElementById($this->elementId, null, $this->sites[0]);
 
         if (!$element) {
             return;
