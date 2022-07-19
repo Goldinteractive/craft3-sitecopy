@@ -9,6 +9,7 @@ namespace goldinteractive\sitecopy\jobs;
 use Craft;
 use craft\base\Element;
 use craft\queue\BaseJob;
+use goldinteractive\sitecopy\SiteCopy;
 
 /**
  * Class SyncElementContent
@@ -26,14 +27,19 @@ class SyncElementContent extends BaseJob
     public $elementId;
 
     /**
+     * @var int the site ID where we want to copy the content from
+     */
+    public $sourceSiteId;
+
+    /**
      * @var int[] The sites IDs where we want to overwrite the content
      */
     public $sites;
 
     /**
-     * @var array The content
+     * @var array
      */
-    public $data;
+    public $attributesToCopy;
 
     // Public Methods
     // =========================================================================
@@ -49,11 +55,26 @@ class SyncElementContent extends BaseJob
             return;
         }
 
-        // get element from a supported site, not important which one
-        $element = $elementsService->getElementById($this->elementId, null, $this->sites[0]);
+        $sourceElement = $elementsService->getElementById($this->elementId, null, $this->sourceSiteId);
 
-        if (!$element) {
+        if (!$sourceElement) {
             return;
+        }
+
+        $data = [];
+
+        foreach ($this->attributesToCopy as $attribute) {
+            if ($attribute == 'fields') {
+                $tmp = SiteCopy::getInstance()->sitecopy->getSerializedFieldValues($sourceElement);
+
+                if (empty($tmp)) {
+                    continue;
+                }
+            }else {
+                $tmp = $sourceElement->{$attribute};
+            }
+
+            $data[$attribute] = $tmp;
         }
 
         $totalSites = count($this->sites);
@@ -66,9 +87,9 @@ class SyncElementContent extends BaseJob
             ]));
 
             /** @var Element $siteElement */
-            $siteElement = $elementsService->getElementById($element->id, get_class($element), $siteId);
+            $siteElement = $elementsService->getElementById($sourceElement->id, get_class($sourceElement), $siteId);
 
-            foreach ($this->data as $key => $item) {
+            foreach ($data as $key => $item) {
                 if ($key == 'fields') {
                     $siteElement->setFieldValues($item);
                     continue;

@@ -94,9 +94,7 @@ class SiteCopy extends Plugin
                 Elements::class,
                 Elements::EVENT_AFTER_SAVE_ELEMENT,
                 function (ElementEvent $event) {
-                    $draftId = Craft::$app->request->post('draftId');
-                    
-                    $this->sitecopy->syncElementContent($event, Craft::$app->request->post('sitecopy', []), $draftId);
+                    $this->sitecopy->syncElementContent($event, Craft::$app->request->post('sitecopy', []));
                 }
             );
         }

@@ -184,7 +184,7 @@ class SiteCopy extends Component
      * @param array        $elementSettings
      * @throws Throwable
      */
-    public function syncElementContent(ElementEvent $event, array $elementSettings, ?int $draftId)
+    public function syncElementContent(ElementEvent $event, array $elementSettings)
     {
         /** @var Entry|GlobalSet $entry */
         // This is not necessarily our localized entry
@@ -222,9 +222,9 @@ class SiteCopy extends Component
 
         if ($entry instanceof GlobalSet) {
             $attributesToCopy = ['fields'];
-        }elseif ($entry instanceof Asset) {
+        } elseif ($entry instanceof Asset) {
             $attributesToCopy = $selectedAttributes;
-        }else {
+        } else {
             $attributesToCopy = $selectedAttributes;
         }
 
@@ -263,64 +263,11 @@ class SiteCopy extends Component
         }
 
         if (!empty($matchingSites)) {
-            foreach ($attributesToCopy as $attribute) {
-                $tmp = Craft::$app->getRequest()->getBodyParam($attribute);
-
-                // special case, we need to get the data from the model
-                if ($attribute == 'fields') {
-                    $queryStart = Entry::find();
-
-                    if ($entry instanceof GlobalSet) {
-                        $queryStart = GlobalSet::find();
-                    }
-
-                    if ($entry instanceof craft\commerce\elements\Product) {
-                        $queryStart = craft\commerce\elements\Product::find();
-                    }
-
-                    if ($entry instanceof Asset) {
-                        $queryStart = Asset::find();
-                    }
-
-                    // option with draftId
-                    if ($entry instanceof Entry && $draftId) {
-                        $draftOf = Entry::find()
-                        ->draftId($draftId)
-                        ->siteId($entry->siteId)
-                        ->provisionalDrafts()
-                        ->anyStatus()
-                        ->one();
-                    }
-
-                    if (isset($draftOf) && $draftOf !== null) {
-                        $refetchedEntry = $draftOf;
-                    }else {
-                        $refetchedEntry = $queryStart
-                        ->id($entry->id)
-                        ->siteId($entry->siteId)
-                        ->anyStatus()
-                        ->one();
-                    }
-
-                    $tmp = $this->getSerializedFieldValues($refetchedEntry);
-                  
-                }
-
-                if (empty($tmp)) {
-                    continue;
-                }
-
-                $data[$attribute] = $tmp;
-            }
-
-            if (empty($data)) {
-                return;
-            }
-
             Craft::$app->getQueue()->push(new SyncElementContent([
-                'elementId' => (int)$entry->id,
-                'sites'     => $matchingSites,
-                'data'      => $data,
+                'elementId'        => (int)$entry->id,
+                'sourceSiteId'     => $elementSettings['sourceSite'],
+                'sites'            => $matchingSites,
+                'attributesToCopy' => $attributesToCopy,
             ]));
         }
     }
@@ -444,7 +391,7 @@ class SiteCopy extends Component
 
         if ($element instanceof GlobalSet) {
             $attribute = 'combinedSettingsGlobals';
-        }elseif ($element instanceof Asset) {
+        } elseif ($element instanceof Asset) {
             $attribute = 'combinedSettingsAssets';
         }
 

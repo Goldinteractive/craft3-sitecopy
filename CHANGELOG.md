@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fixed
+- Fixed an issue where the content of nested blocks with the propagation method "all" would we copied to too many sites ([#33](https://github.com/Goldinteractive/craft3-sitecopy/issues/33))
+
 ## 0.7.1 - 2022-06-16
 ### Fixed
 - Fixed a bug on siteGroups where element sections are disabled for the primary site
