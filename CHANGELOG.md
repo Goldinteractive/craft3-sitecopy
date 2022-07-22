@@ -2,7 +2,7 @@
 
 ## 0.8.0 - 2022-07-22
 ### Fixed
-- Fixed an issue where the content of nested blocks with the propagation method "all" would we copied to too many sites ([#33](https://github.com/Goldinteractive/craft3-sitecopy/issues/33))
+- Fixed an issue where the content of nested blocks with the propagation method "all" would be copied to too many sites ([#33](https://github.com/Goldinteractive/craft3-sitecopy/issues/33))
 
 ## 0.7.1 - 2022-06-16
 ### Fixed
