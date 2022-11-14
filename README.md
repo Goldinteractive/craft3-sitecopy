@@ -1,4 +1,6 @@
-# SiteCopy for Craft CMS
+# SiteCopy for Craft CMS 3.x
+
+> **Note:** This plugin won't be updated for Craft 4, but you can switch to the new plugin [Site Copy X](https://github.com/Goldinteractive/craft-sitecopy)
 
 This plugin makes it easy to copy the content of an entry from a site to another.
 
